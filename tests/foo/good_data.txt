@@ -6,4 +6,4 @@ Cal:        Fat:        Carb:       Protein:
 
 Total Amounts & Relative Percentages:
 920.0       16.0g       152.0g      44.0g
-            7.5%        71.7%       20.8%       
+            7.5%        71.7%       20.8%  
