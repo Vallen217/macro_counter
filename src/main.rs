@@ -1,5 +1,7 @@
+use regex::Regex;
 use rmc::{MacroCounter, Pathing};
 use rust_macro_counter as rmc;
+use std::io;
 
 fn main() {
     let dir_path = String::from("/home/vallen/Workspace/rust_macro_counter/tests/foo");
@@ -21,6 +23,39 @@ fn main() {
         totals: Vec::new(),
     };
 
-    MacroCounter::compile_data(&mut macro_counter);
-    println!("{}", macro_counter.calories[2]);
+    println!(
+        "\n(mf)  - Modify file\
+        \n(dpf) - Display previous files\
+        \n(dpm) - Display previous monthly data\
+        \n(df)  - Display file\
+        \n(dm)  - Display monthly data\
+        \n(pd)  - Predefined meals\
+        \n(m#)  - Append predefined meal m#\
+        \n(q)   - Quit the program"
+    );
+
+    // TODO: turn into callable function.
+    loop {
+        println!("-");
+        let mut operation = String::new();
+        io::stdin()
+            .read_line(&mut operation)
+            .expect("Error: failed to read stdin.");
+
+        if operation.contains("q") {
+            break;
+        }
+        if operation.contains("mf") {
+            MacroCounter::compile_data(&mut macro_counter);
+
+            println!(
+                "\n(rl#)  - Removes the last n file entry lines\
+                \n(rlq#) - Removes the last n file entry lines and quit\
+                \n(q)    - Quit the loop\
+                \nPress any key to continue"
+            );
+
+            MacroCounter::get_operation(&mut macro_counter);
+        }
+    }
 }

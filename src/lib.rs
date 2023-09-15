@@ -1,5 +1,5 @@
 use regex::Regex;
-use std::fs;
+use std::{fs, io, process::exit};
 
 pub fn pad_word(word: &str) -> String {
     let num_of_spaces = 12 - word.len();
@@ -23,6 +23,13 @@ impl Pathing {
     }
 }
 
+enum MacroType {
+    Calorie,
+    Fat,
+    Carb,
+    Protein,
+}
+
 pub struct MacroCounter {
     pub file_path: String,
     pub calories: Vec<f32>,
@@ -33,6 +40,7 @@ pub struct MacroCounter {
 }
 
 impl MacroCounter {
+    // compile prexisting data, read from a file.
     pub fn compile_data(&mut self) {
         let file_data = fs::read_to_string(self.file_path.clone()).expect("Error reading file");
 
@@ -63,5 +71,79 @@ impl MacroCounter {
                 }
             }
         }
+    }
+
+    pub fn remove_data(&mut self, operation: String) {
+        loop {
+            let iter: i8 = if operation.contains("q") {
+                operation.clone().trim()[3..].parse().unwrap()
+            } else {
+                println!("{}", operation.clone().trim());
+                operation.clone().trim()[2..].parse().unwrap()
+            };
+
+            for _ in 0..iter {
+                self.calories.pop();
+                self.fat.pop();
+                self.carb.pop();
+                self.protein.pop();
+            }
+
+            if operation.trim().contains("q") {
+                break;
+            } else {
+                return self.call_collect_data();
+            }
+        }
+    }
+
+    pub fn get_operation(&mut self) {
+        println!("-");
+        let mut operation = String::from("");
+        io::stdin()
+            .read_line(&mut operation)
+            .expect("Error: failed to read stdin.");
+        if operation.trim() == "q" {
+            // TODO: return main(); loop && make case insensitive.
+            exit(0);
+        }
+
+        let re = Regex::new(r"rlq?[0-9]*").unwrap();
+        if re.is_match(&operation) {
+            return self.remove_data(operation);
+        }
+        if operation.contains("q") {
+            // TODO: return main(); loop && make case insensitive.
+            exit(0);
+        } else {
+            return self.call_collect_data();
+        }
+    }
+
+    // Making an additional function purely to call collect_data()
+    // was the only way I thought of to keep it D.R.Y. and idiomatic.
+    fn call_collect_data(&mut self) {
+        self.collect_data(String::from("Calorie: "), MacroType::Calorie);
+        self.collect_data(String::from("Carb: "), MacroType::Fat);
+        self.collect_data(String::from("Fat: "), MacroType::Carb);
+        self.collect_data(String::from("Protein: "), MacroType::Protein);
+        self.get_operation();
+    }
+
+    fn collect_data(&mut self, macro_stdin: String, macro_type: MacroType) {
+        println!("{}", macro_stdin);
+        let mut macro_data = String::new();
+        io::stdin()
+            .read_line(&mut macro_data)
+            .expect("Error: failed to read stdin.");
+        let float_data: f32 = macro_data.trim().parse().unwrap();
+
+        match macro_type {
+            MacroType::Calorie => self.calories.push(float_data),
+            MacroType::Fat => self.fat.push(float_data),
+            MacroType::Carb => self.carb.push(float_data),
+            MacroType::Protein => self.protein.push(float_data),
+        };
+        dbg!(&self.calories);
     }
 }

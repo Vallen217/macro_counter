@@ -90,4 +90,36 @@ mod tests {
         };
         MacroCounter::compile_data(&mut test_data);
     }
+
+    #[test]
+    fn remove_data() {
+        let file_path =
+            String::from("/home/vallen/Workspace/rust_macro_counter/tests/foo/good_data.txt");
+        let mut test_data = rmc::MacroCounter {
+            file_path,
+            calories: Vec::new(),
+            fat: Vec::new(),
+            carb: Vec::new(),
+            protein: Vec::new(),
+            totals: Vec::new(),
+        };
+        let operation = String::from("rlq2");
+
+        // let initial_cal: Vec<f32> = Vec::from([180.0, 180.0, 280.0, 280.0]);
+        // let initial_fat: Vec<f32> = Vec::from([6.0, 6.0, 2.0, 2.0]);
+        // let initial_carb: Vec<f32> = Vec::from([21.0, 21.0, 55.0, 55.0]);
+        // let initial_protein: Vec<f32> = Vec::from([12.0, 12.8, 10.0, 10.0]);
+
+        let expected_cal: Vec<f32> = Vec::from([180.0, 180.0]);
+        let expected_fat: Vec<f32> = Vec::from([6.0, 6.0]);
+
+        MacroCounter::compile_data(&mut test_data);
+        MacroCounter::remove_data(&mut test_data, operation);
+
+        let resultant_cal: Vec<f32> = test_data.calories.clone();
+        let resultant_fat: Vec<f32> = test_data.fat.clone();
+
+        assert_eq!(expected_cal, resultant_cal);
+        assert_eq!(expected_fat, resultant_fat);
+    }
 }
