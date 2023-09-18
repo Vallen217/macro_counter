@@ -1,7 +1,8 @@
 #[cfg(test)]
 mod tests {
-    use rust_macro_counter::MacroCounter;
-    use rust_macro_counter::Pathing;
+    use rmc::macro_counter::MacroCounter;
+    use rmc::pathing::Pathing;
+    use rust_macro_counter as rmc;
 
     fn instantiate_macro_counter(file_path: Option<String>) -> MacroCounter {
         let good_data_path =
