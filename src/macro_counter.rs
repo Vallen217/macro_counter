@@ -1,4 +1,3 @@
-use super::*;
 use regex::Regex;
 use std::{fs, io};
 
@@ -18,9 +17,9 @@ pub struct MacroCounter {
     pub totals: Vec<f32>,
 }
 
-mod write_file {
-    use super::pad_word;
-    use crate::MacroCounter;
+pub mod write_file {
+    use super::*;
+    use crate::common::utils::pad_word;
     use std::fs::{self, OpenOptions};
     use std::io::Write;
 
@@ -32,14 +31,14 @@ mod write_file {
             self.totals.push(self.protein.iter().sum());
 
             let ratio: f32 = 100.0 / (self.totals[1] + self.totals[2] + self.totals[3]);
-            let mut relative_percentage: Vec<String> = Vec::new();
+            let mut rel_percentage: Vec<String> = Vec::new();
             for i in 1..4 {
                 let percent_1 = format!("{:.1}%", ratio * self.totals[i]);
                 let percent_2 = format!("{}{}", percent_1, pad_word(&percent_1));
-                relative_percentage.push(percent_2.clone());
+                rel_percentage.push(percent_2.clone());
             }
 
-            return relative_percentage;
+            return rel_percentage;
         }
 
         fn generate_macro_string(&mut self, j: usize, i: usize) -> String {
@@ -109,11 +108,11 @@ mod write_file {
                 }
             }
 
-            let relative_percentage = self.compile_totals();
+            let rel_percentage = self.compile_totals();
             let total_calorie = format!("{}", self.totals[0]);
-            let total_fat = format!("{}g", self.totals[1]);
-            let total_carb = format!("{}g", self.totals[2]);
-            let total_protein = format!("{}g", self.totals[3]);
+            let total_fat = format!("{}.0g", self.totals[1]);
+            let total_carb = format!("{}.0g", self.totals[2]);
+            let total_protein = format!("{}.0g", self.totals[3]);
             let string_totals = format!(
                 "\n\nTotal Amounts & Relative Percentages:\
             \n{}{}{}{}{}{}{}\n{}{}{}{}",
@@ -125,22 +124,23 @@ mod write_file {
                 pad_word(&total_carb),
                 total_protein,
                 " ".repeat(12),
-                relative_percentage[0],
-                relative_percentage[1],
-                relative_percentage[2]
+                rel_percentage[0],
+                rel_percentage[1],
+                rel_percentage[2]
             );
             append_file.write(string_totals.as_bytes()).unwrap();
+            // NOTE: disabled for testing.
+            // return self.get_operation();
         }
     }
 }
 
 pub mod input_data {
-    use crate::macro_counter::MacroType;
-    use crate::MacroCounter;
+    use super::*;
     use std::io;
 
     impl MacroCounter {
-        // Making an additional function purely to call collect_data()
+        // Having an additional function purely to call collect_data()
         // was the only way I thought of to keep it D.R.Y. and idiomatic.
         pub fn collect_data(&mut self) {
             self.push_data(String::from("Calorie: "), MacroType::Calorie);
@@ -148,6 +148,7 @@ pub mod input_data {
             self.push_data(String::from("Fat: "), MacroType::Carb);
             self.push_data(String::from("Protein: "), MacroType::Protein);
             self.get_operation();
+            self.write_file();
         }
 
         fn push_data(&mut self, macro_stdin: String, macro_type: MacroType) {
@@ -173,7 +174,14 @@ pub mod input_data {
 }
 
 impl MacroCounter {
-    pub fn compile_data(&mut self) {
+    pub fn compile_data(&mut self, clean_data: bool) {
+        if clean_data {
+            self.calorie.clear();
+            self.fat.clear();
+            self.carb.clear();
+            self.protein.clear();
+        }
+
         let file_data = fs::read_to_string(self.file_path.clone()).expect("Error reading file");
 
         for line in file_data.lines() {
@@ -198,7 +206,7 @@ impl MacroCounter {
                         1 => self.fat.push(datum),
                         2 => self.carb.push(datum),
                         3 => self.protein.push(datum),
-                        _ => panic!("Error: file iteration out of bounds."),
+                        _ => panic!("4"),
                     };
                 }
             }
@@ -206,28 +214,26 @@ impl MacroCounter {
     }
 
     pub fn get_operation(&mut self) {
-        print!("-");
         let mut operation = String::from("");
-        io::stdin()
-            .read_line(&mut operation)
-            .expect("Error: failed to read stdin.");
+        io::stdin().read_line(&mut operation).unwrap();
+
         if operation.trim() == "q" {
-            return run(self.file_path.clone());
+            return crate::main();
         }
 
         let re = Regex::new(r"rlq?[0-9]*").unwrap();
         if re.is_match(&operation) {
             return self.remove_data(operation);
         }
+
         if operation.contains("q") {
-            return run(self.file_path.clone());
+            return crate::main();
         } else {
             return self.collect_data();
         }
     }
 
-    // NOTE: This is only public for testing.
-    pub fn remove_data(&mut self, operation: String) {
+    fn remove_data(&mut self, operation: String) {
         loop {
             let iter: i8 = if operation.contains("q") {
                 operation.clone().trim()[3..].parse().unwrap()
@@ -249,5 +255,102 @@ impl MacroCounter {
                 return self.collect_data();
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod unit_tests {
+    use super::*;
+
+    fn instantiate_macro_counter(file_path: Option<String>) -> MacroCounter {
+        let good_data_path = String::from(
+            "/home/vallen/Workspace/rust_macro_counter/test_data/good_data/data_1.txt",
+        );
+        let file_path = match file_path {
+            Some(file_path) => file_path,
+            None => good_data_path,
+        };
+
+        let test_data = MacroCounter {
+            file_path,
+            calorie: Vec::new(),
+            fat: Vec::new(),
+            carb: Vec::new(),
+            protein: Vec::new(),
+            totals: Vec::new(),
+        };
+
+        return test_data;
+    }
+
+    #[test]
+    fn compile_data_eq_fields() {
+        let mut test_data = instantiate_macro_counter(None);
+
+        MacroCounter::compile_data(&mut test_data, false);
+
+        let test_cal: Vec<f32> = Vec::from([180.0, 180.0, 280.0, 280.0]);
+        let test_fat: Vec<f32> = Vec::from([7.7, 0.1, 11.0, 2.0]);
+        let test_carb: Vec<f32> = Vec::from([21.0, 21.0, 55.0, 55.0]);
+        let test_protein: Vec<f32> = Vec::from([42.0, 22.8, 10.1, 62.1]);
+
+        assert_eq!(&test_data.calorie, &test_cal);
+        assert_ne!(&test_data.fat, &test_fat);
+        assert_eq!(&test_data.carb, &test_carb);
+        assert_ne!(&test_data.protein, &test_protein);
+    }
+
+    #[test]
+    #[should_panic]
+    fn compile_data_ne_fields() {
+        let mut test_data = instantiate_macro_counter(None);
+
+        MacroCounter::compile_data(&mut test_data, false);
+
+        let test_cal: Vec<f32> = Vec::from([180.0, 180.0, 280.0, 280.0]);
+        let test_fat: Vec<f32> = Vec::from([7.7, 0.1, 11.0, 2.0]);
+        let test_carb: Vec<f32> = Vec::from([21.0, 21.0, 55.0, 55.0]);
+        let test_protein: Vec<f32> = Vec::from([42.0, 22.8, 10.1, 62.1]);
+
+        assert_ne!(&test_data.calorie, &test_cal);
+        assert_eq!(&test_data.fat, &test_fat);
+        assert_ne!(&test_data.carb, &test_carb);
+        assert_eq!(&test_data.protein, &test_protein);
+    }
+
+    #[test]
+    #[should_panic]
+    fn compile_bad_data() {
+        let file_path =
+            String::from("/home/vallen/Workspace/rust_macro_counter/test_data/bad_data/data.txt");
+        let mut test_data = instantiate_macro_counter(Some(file_path));
+        MacroCounter::compile_data(&mut test_data, false);
+    }
+
+    #[test]
+    fn remove_data() {
+        let mut test_data = instantiate_macro_counter(None);
+        let operation = String::from("rlq2");
+
+        let expected_cal: Vec<f32> = Vec::from([180.0, 180.0]);
+        let expected_fat: Vec<f32> = Vec::from([6.0, 6.0]);
+
+        MacroCounter::compile_data(&mut test_data, false);
+        MacroCounter::remove_data(&mut test_data, operation);
+
+        let resultant_cal: Vec<f32> = test_data.calorie.clone();
+        let resultant_fat: Vec<f32> = test_data.fat.clone();
+
+        assert_eq!(expected_cal, resultant_cal);
+        assert_eq!(expected_fat, resultant_fat);
+    }
+
+    #[test]
+    fn write_file() {
+        let mut test_data = instantiate_macro_counter(None);
+
+        MacroCounter::compile_data(&mut test_data, true);
+        MacroCounter::write_file(&mut test_data);
+        MacroCounter::compile_data(&mut test_data, false);
     }
 }
