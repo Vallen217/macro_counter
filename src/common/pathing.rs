@@ -7,19 +7,13 @@ pub struct Pathing {
 }
 
 impl Pathing {
-    pub fn create_file(&self, monthly_data: bool) {
+    pub fn create_file(&self) {
         fs::create_dir_all(&self.dir_path).unwrap();
-
-        let file_path: String = if monthly_data {
-            format!("{}.txt", self.dir_path.clone())
-        } else {
-            self.file_path.clone()
-        };
 
         let _ = fs::OpenOptions::new()
             .write(true)
             .create_new(true)
-            .open(file_path);
+            .open(&self.file_path);
     }
 
     pub fn generate_file_path() -> Pathing {
@@ -50,7 +44,7 @@ impl Pathing {
             dir_path,
         };
 
-        Pathing::create_file(&pathing, false);
+        Pathing::create_file(&pathing);
         return pathing;
     }
 
@@ -75,6 +69,6 @@ mod unit_tests {
             file_path,
         };
 
-        Pathing::create_file(&test_pathing, false);
+        Pathing::create_file(&test_pathing);
     }
 }

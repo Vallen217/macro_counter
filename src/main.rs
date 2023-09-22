@@ -43,15 +43,18 @@ fn main() {
 
         if operation.contains("mf") {
             println!(
-                "\n(rl#)  - Removes the last n file entry lines\
+                "\n(rl#) - Removes the last n file entry lines\
                 \n(rlq#) - Removes the last n file entry lines and quit\
                 \n(q)    - Quit the loop\
                 \nPress any key to continue"
             );
-            MacroCounter::compile_data(&mut macro_counter, true);
-            // FIX: recompile data before writing file
+
+            // macro_counter fields are re-instantiated every program call,
+            // so compile_data() must be called to read data from files,
+            // and push it to macro_counter_fields first,
+            // inorder to modify file without loosing prexisting data.
+            MacroCounter::compile_data(&mut macro_counter, false);
             MacroCounter::get_operation(&mut macro_counter);
-            return main();
         }
 
         if operation.contains("dpf") {
@@ -67,11 +70,7 @@ fn main() {
         }
 
         if operation.contains("dm") {
-            let parsed_data: (Vec<String>, Vec<String>) =
-                DisplayData::compile_monthly_data(&mut display_data);
-
-            Pathing::create_file(&pathing, true);
-            DisplayData::write_monthly_data(&mut display_data, parsed_data);
+            DisplayData::display_monthly_data(&mut display_data);
         }
 
         // TODO: predefined_meals

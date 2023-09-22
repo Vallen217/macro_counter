@@ -11,6 +11,7 @@ enum MacroType {
     Protein,
 }
 
+#[derive(Debug)]
 pub struct MacroCounter {
     pub file_path: String,
     pub calorie: Vec<f32>,
@@ -37,7 +38,7 @@ impl MacroCounter {
             }
 
             // ignores file lines that aren't numbers
-            let re = Regex::new(r"\d+\.\dg?").unwrap();
+            let re = Regex::new(r"\d+\.?\d?g?").unwrap();
             if re.is_match(&line) {
                 for (iter, mut datum) in line.split_whitespace().enumerate() {
                     // remove the 'gram' annotaion from file lines.
@@ -95,6 +96,8 @@ impl MacroCounter {
                 self.carb.pop();
                 self.protein.pop();
             }
+            // write the new MacroCounter fields to the file.
+            self.write_file();
 
             if operation.trim().contains("q") {
                 break;

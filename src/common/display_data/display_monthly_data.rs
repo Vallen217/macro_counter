@@ -3,7 +3,12 @@ use crate::common::utils::pad_word;
 use std::fs;
 
 impl DisplayData {
-    pub fn compile_monthly_data(&mut self) -> (Vec<String>, Vec<String>) {
+    fn compile_monthly_data(&mut self) -> (Vec<String>, Vec<String>) {
+        // if DisplayData::compile_monthly_data() is called repeatedly within
+        // a single program runtime, these fields will continually aggregate.
+        self.macro_totals.clear();
+        self.totals.clear();
+
         let directory = fs::read_dir(&self.dir_path).unwrap();
 
         // generate initial `self.macro_totals` sub-vectors to deter index errors.
@@ -13,6 +18,7 @@ impl DisplayData {
 
         for file in directory {
             let mut totals_line = String::new();
+            // the 2nd to last line of the file, which has the data we want to compile.
             let mut is_totals_line = false;
 
             for i in fs::read_to_string(file.unwrap().path()).unwrap().lines() {
@@ -21,7 +27,7 @@ impl DisplayData {
                     is_totals_line = false;
                 }
 
-                // The next iteration will be the totals file line required.
+                // The next iteration will be the totals_file_line required.
                 if i.starts_with("Total") {
                     is_totals_line = true;
                 }
@@ -38,8 +44,11 @@ impl DisplayData {
         return self.parse_monthly_data();
     }
 
+    // parses data gathered from DisplayData::compile_data()
+    // into pieces of data we want to disply and returns them as Strings.
     fn parse_monthly_data(&mut self) -> (Vec<String>, Vec<String>) {
         let dir = fs::read_dir(&self.dir_path).unwrap();
+        // get the number of files in the dir to calculate various monthly means.
         let mut dir_len: f32 = 0.0;
         for _ in dir {
             dir_len += 1.0;
@@ -63,7 +72,7 @@ impl DisplayData {
         return (monthly_means, monthly_rel_percent);
     }
 
-    pub fn write_monthly_data(&mut self, parsed_data: (Vec<String>, Vec<String>)) {
+    pub fn display_monthly_data(&mut self) {
         println!(
             "\n\nCal:{}Fat:{}Carb:{}Protein:{}",
             pad_word("Cal:"),
@@ -72,6 +81,7 @@ impl DisplayData {
             pad_word("Protein:")
         );
 
+        let parsed_data = self.compile_monthly_data();
         let monthly_means: Vec<String> = parsed_data.0;
         let monthly_rel_percent: Vec<String> = parsed_data.1;
 
@@ -96,6 +106,7 @@ impl DisplayData {
         }
 
         print!("\n\nMean daily relative percentages:\n");
+        print!("{}", pad_word(""));
         for val in monthly_rel_percent.iter() {
             print!("{}{}", val, pad_word(&val));
         }

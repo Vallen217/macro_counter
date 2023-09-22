@@ -7,8 +7,9 @@ impl MacroCounter {
         self.push_data(String::from("Carb: "), MacroType::Fat);
         self.push_data(String::from("Fat: "), MacroType::Carb);
         self.push_data(String::from("Protein: "), MacroType::Protein);
-        self.get_operation();
+        // save newly gathered data to the file,
         self.write_file();
+        return self.get_operation();
     }
 
     fn push_data(&mut self, macro_stdin: String, macro_type: MacroType) {

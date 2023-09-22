@@ -44,9 +44,7 @@ impl DisplayData {
 
         if monthly_data {
             self.dir_path = path;
-            dbg!(&self.dir_path);
-            let parsed_data: (Vec<String>, Vec<String>) = DisplayData::compile_monthly_data(self);
-            DisplayData::write_monthly_data(self, parsed_data);
+            DisplayData::display_monthly_data(self);
         } else {
             self.display_data(Some(path));
         }

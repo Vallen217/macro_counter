@@ -9,7 +9,6 @@ impl MacroCounter {
         self.totals.push(self.fat.iter().sum());
         self.totals.push(self.carb.iter().sum());
         self.totals.push(self.protein.iter().sum());
-        dbg!(&self.totals);
 
         let ratio: f32 = 100.0 / (self.totals[1] + self.totals[2] + self.totals[3]);
         let mut rel_percentage: Vec<String> = Vec::new();
@@ -29,30 +28,25 @@ impl MacroCounter {
         So it's added to the string manually. */
         let macro_string: String = match j {
             0 => {
-                let mut string_pad = self.calorie[i].clone().to_string();
-                string_pad.push_str(".0");
+                let string_pad = self.calorie[i].clone().to_string();
                 let temp_macro_string: String =
-                    format!("{}.0{}", self.calorie[i], pad_word(&string_pad));
+                    format!("{}{}", self.calorie[i], pad_word(&string_pad));
                 temp_macro_string
             }
             1 => {
-                let mut string_pad = self.fat[i].clone().to_string();
-                string_pad.push_str(".0g");
+                let string_pad = self.fat[i].clone().to_string();
                 let temp_macro_string: String =
-                    format!("{}.0g{}", self.fat[i], pad_word(&string_pad));
+                    format!("{}g{}", self.fat[i], pad_word(&string_pad));
                 temp_macro_string
             }
             2 => {
-                let mut string_pad = self.carb[i].clone().to_string();
-                string_pad.push_str(".0g");
+                let string_pad = self.carb[i].clone().to_string();
                 let temp_macro_string: String =
-                    format!("{}.0g{}", self.carb[i], pad_word(&string_pad));
+                    format!("{}g{}", self.carb[i], pad_word(&string_pad));
                 temp_macro_string
             }
             3 => {
-                let mut string_pad = self.protein[i].clone().to_string();
-                string_pad.push_str(".0g");
-                let temp_macro_string: String = format!("{}.0g", self.protein[i]);
+                let temp_macro_string: String = format!("{}g", self.protein[i]);
                 temp_macro_string
             }
             _ => panic!("4"),
@@ -89,10 +83,10 @@ impl MacroCounter {
         }
 
         let rel_percentage = self.compile_totals();
-        let total_calorie = format!("{}.0", self.totals[0]);
-        let total_fat = format!("{}.0g", self.totals[1]);
-        let total_carb = format!("{}.0g", self.totals[2]);
-        let total_protein = format!("{}.0g", self.totals[3]);
+        let total_calorie = format!("{}", self.totals[0]);
+        let total_fat = format!("{}g", self.totals[1]);
+        let total_carb = format!("{}g", self.totals[2]);
+        let total_protein = format!("{}g", self.totals[3]);
         let string_totals = format!(
             "\n\nTotal Amounts & Relative Percentages:\
             \n{}{}{}{}{}{}{}\n{}{}{}{}",
