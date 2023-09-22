@@ -27,6 +27,7 @@ fn main() {
     println!(
         "\n(mf)  - Modify file\
         \n(dpf) - Display previous files\
+        \n(dpm) - Display previous monthly data\
         \n(df)  - Display file\
         \n(dm)  - Display monthly data\
         \n(pd)  - Predefined meals\
@@ -48,16 +49,23 @@ fn main() {
                 \nPress any key to continue"
             );
             MacroCounter::compile_data(&mut macro_counter, true);
+            // FIX: recompile data before writing file
             MacroCounter::get_operation(&mut macro_counter);
             return main();
+        }
+
+        if operation.contains("dpf") {
+            let parent_dir = String::from("/home/vallen/Workspace/rust_macro_counter/data_files");
+            DisplayData::display_previous_data(&mut display_data, parent_dir, false);
+        }
+        if operation.contains("dpm") {
+            let parent_dir = String::from("/home/vallen/Workspace/rust_macro_counter/data_files");
+            DisplayData::display_previous_data(&mut display_data, parent_dir, true);
         }
         if operation.contains("df") {
             DisplayData::display_data(&display_data, None);
         }
-        if operation.contains("dpf") {
-            let parent_dir = String::from("/home/vallen/Workspace/rust_macro_counter/data_files");
-            DisplayData::display_previous_data(&mut display_data, parent_dir, &pathing);
-        }
+
         if operation.contains("dm") {
             let parsed_data: (Vec<String>, Vec<String>) =
                 DisplayData::compile_monthly_data(&mut display_data);
@@ -65,10 +73,12 @@ fn main() {
             Pathing::create_file(&pathing, true);
             DisplayData::write_monthly_data(&mut display_data, parsed_data);
         }
-        // TODO:
+
+        // TODO: predefined_meals
         // if operation.contains("pd") {}
         // let re = Regex::new(r"m[0-9]+").unwrap();
         // if re.is_match(operation) {}
+
         if operation.contains("q") {
             exit(0);
         }

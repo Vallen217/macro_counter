@@ -1,3 +1,6 @@
+pub mod input_data;
+pub mod write_file;
+
 use regex::Regex;
 use std::{fs, io};
 
@@ -15,162 +18,6 @@ pub struct MacroCounter {
     pub carb: Vec<f32>,
     pub protein: Vec<f32>,
     pub totals: Vec<f32>,
-}
-
-pub mod write_file {
-    use super::*;
-    use crate::common::utils::pad_word;
-    use std::fs::{self, OpenOptions};
-    use std::io::Write;
-
-    impl MacroCounter {
-        fn compile_totals(&mut self) -> Vec<String> {
-            self.totals.push(self.calorie.iter().sum());
-            self.totals.push(self.fat.iter().sum());
-            self.totals.push(self.carb.iter().sum());
-            self.totals.push(self.protein.iter().sum());
-
-            let ratio: f32 = 100.0 / (self.totals[1] + self.totals[2] + self.totals[3]);
-            let mut rel_percentage: Vec<String> = Vec::new();
-            for i in 1..4 {
-                let percent_1 = format!("{:.1}%", ratio * self.totals[i]);
-                let percent_2 = format!("{}{}", percent_1, pad_word(&percent_1));
-                rel_percentage.push(percent_2.clone());
-            }
-
-            return rel_percentage;
-        }
-
-        fn generate_macro_string(&mut self, j: usize, i: usize) -> String {
-            /* despite be of datatype: f32, if a field from `MacroCounter`
-            is a whole number (i.e. end with a zero), the ".0" doesn't survive
-            the conversion from f32 to String, needed for `macro_pad`.
-            So it's added to the string manually. */
-            let macro_string: String = match j {
-                0 => {
-                    let mut string_pad = self.calorie[i].clone().to_string();
-                    string_pad.push_str(".0");
-                    let temp_macro_string: String =
-                        format!("{}.0{}", self.calorie[i], pad_word(&string_pad));
-                    temp_macro_string
-                }
-                1 => {
-                    let mut string_pad = self.fat[i].clone().to_string();
-                    string_pad.push_str(".0g");
-                    let temp_macro_string: String =
-                        format!("{}.0g{}", self.fat[i], pad_word(&string_pad));
-                    temp_macro_string
-                }
-                2 => {
-                    let mut string_pad = self.carb[i].clone().to_string();
-                    string_pad.push_str(".0g");
-                    let temp_macro_string: String =
-                        format!("{}.0g{}", self.carb[i], pad_word(&string_pad));
-                    temp_macro_string
-                }
-                3 => {
-                    let mut string_pad = self.protein[i].clone().to_string();
-                    string_pad.push_str(".0g");
-                    let temp_macro_string: String =
-                        format!("{}.0g{}", self.protein[i], pad_word(&string_pad));
-                    temp_macro_string
-                }
-                _ => panic!("4"),
-            };
-
-            return macro_string;
-        }
-
-        pub fn write_file(&mut self) {
-            let top_file_line = format!(
-                "Cal:{}Fat:{}Carb:{}Protein:{}",
-                pad_word("Cal:"),
-                pad_word("Fat:"),
-                pad_word("Carb:"),
-                pad_word("Protein:")
-            );
-            fs::write(&self.file_path, top_file_line).expect("Error: Reading file");
-
-            let mut append_file = OpenOptions::new()
-                .write(true)
-                .append(true)
-                .open(&self.file_path)
-                .unwrap();
-
-            for i in 0..self.calorie.len() {
-                append_file
-                    .write("\n".as_bytes())
-                    .expect("Error: Failed to write to file.");
-
-                for j in 0..4 {
-                    let macro_string = self.generate_macro_string(j, i);
-                    append_file.write(macro_string.as_bytes()).unwrap();
-                }
-            }
-
-            let rel_percentage = self.compile_totals();
-            let total_calorie = format!("{}", self.totals[0]);
-            let total_fat = format!("{}.0g", self.totals[1]);
-            let total_carb = format!("{}.0g", self.totals[2]);
-            let total_protein = format!("{}.0g", self.totals[3]);
-            let string_totals = format!(
-                "\n\nTotal Amounts & Relative Percentages:\
-            \n{}{}{}{}{}{}{}\n{}{}{}{}",
-                total_calorie,
-                pad_word(&total_calorie),
-                total_fat,
-                pad_word(&total_fat),
-                total_carb,
-                pad_word(&total_carb),
-                total_protein,
-                " ".repeat(12),
-                rel_percentage[0],
-                rel_percentage[1],
-                rel_percentage[2]
-            );
-            append_file.write(string_totals.as_bytes()).unwrap();
-            // NOTE: disabled for testing.
-            // return self.get_operation();
-        }
-    }
-}
-
-pub mod input_data {
-    use super::*;
-    use std::io;
-
-    impl MacroCounter {
-        // Having an additional function purely to call collect_data()
-        // was the only way I thought of to keep it D.R.Y. and idiomatic.
-        pub fn collect_data(&mut self) {
-            self.push_data(String::from("Calorie: "), MacroType::Calorie);
-            self.push_data(String::from("Carb: "), MacroType::Fat);
-            self.push_data(String::from("Fat: "), MacroType::Carb);
-            self.push_data(String::from("Protein: "), MacroType::Protein);
-            self.get_operation();
-            self.write_file();
-        }
-
-        fn push_data(&mut self, macro_stdin: String, macro_type: MacroType) {
-            println!("{}", macro_stdin);
-            let mut macro_data = String::new();
-            io::stdin()
-                .read_line(&mut macro_data)
-                .expect("Error: failed to read stdin.");
-
-            let float_data: f32 = match macro_data.trim().parse() {
-                Ok(num) => num,
-                Err(_) => 0.0,
-            };
-
-            match macro_type {
-                MacroType::Calorie => self.calorie.push(float_data),
-                MacroType::Fat => self.fat.push(float_data),
-                MacroType::Carb => self.carb.push(float_data),
-                MacroType::Protein => self.protein.push(float_data),
-            };
-        }
-    }
 }
 
 impl MacroCounter {
@@ -284,7 +131,7 @@ mod unit_tests {
     }
 
     #[test]
-    fn compile_data_eq_fields() {
+    fn check_data_fields_eq() {
         let mut test_data = instantiate_macro_counter(None);
 
         MacroCounter::compile_data(&mut test_data, false);
@@ -302,7 +149,7 @@ mod unit_tests {
 
     #[test]
     #[should_panic]
-    fn compile_data_ne_fields() {
+    fn check_data_fields_ne() {
         let mut test_data = instantiate_macro_counter(None);
 
         MacroCounter::compile_data(&mut test_data, false);
@@ -328,7 +175,7 @@ mod unit_tests {
     }
 
     #[test]
-    fn remove_data() {
+    fn test_remove_data() {
         let mut test_data = instantiate_macro_counter(None);
         let operation = String::from("rlq2");
 
@@ -343,14 +190,5 @@ mod unit_tests {
 
         assert_eq!(expected_cal, resultant_cal);
         assert_eq!(expected_fat, resultant_fat);
-    }
-
-    #[test]
-    fn write_file() {
-        let mut test_data = instantiate_macro_counter(None);
-
-        MacroCounter::compile_data(&mut test_data, true);
-        MacroCounter::write_file(&mut test_data);
-        MacroCounter::compile_data(&mut test_data, false);
     }
 }

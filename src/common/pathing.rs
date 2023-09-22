@@ -64,7 +64,7 @@ mod unit_tests {
     use super::*;
 
     #[test]
-    fn file_exists() {
+    fn test_file_exists() {
         let dir_path =
             String::from("/home/vallen/Workspace/rust_macro_counter/test_data/good_data");
         let file_path = String::from(

@@ -9,7 +9,7 @@ mod unit_tests {
     use super::*;
 
     #[test]
-    fn check_padding() {
+    fn test_pad_word() {
         let word: &str = "test";
         let padding: String = pad_word(word);
         let padded_word = String::from("        ");
