@@ -22,10 +22,6 @@ impl MacroCounter {
     }
 
     fn generate_macro_string(&mut self, j: usize, i: usize) -> String {
-        /* despite be of datatype: f32, if a field from `MacroCounter`
-        is a whole number (i.e. end with a zero), the ".0" doesn't survive
-        the conversion from f32 to String, needed for `macro_pad`.
-        So it's added to the string manually. */
         let macro_string: String = match j {
             0 => {
                 let string_pad = self.calorie[i].clone().to_string();
@@ -138,9 +134,11 @@ mod unit_tests {
     fn test_write_file() {
         let mut test_data = instantiate_macro_counter(None);
 
-        MacroCounter::compile_data(&mut test_data, true);
-        MacroCounter::write_file(&mut test_data);
         MacroCounter::compile_data(&mut test_data, false);
+        MacroCounter::write_file(&mut test_data);
+        dbg!(&test_data.calorie);
+        MacroCounter::compile_data(&mut test_data, true);
+        dbg!(&test_data.calorie);
     }
 
     #[test]
@@ -150,6 +148,7 @@ mod unit_tests {
 
         MacroCounter::compile_data(&mut test_data, false);
         MacroCounter::compile_totals(&mut test_data);
+        MacroCounter::compile_data(&mut test_data, true);
 
         assert_eq!(test_data.totals, expected_values);
     }
@@ -161,6 +160,7 @@ mod unit_tests {
 
         MacroCounter::compile_data(&mut test_data, false);
         let resultant_values: Vec<String> = MacroCounter::compile_totals(&mut test_data);
+        MacroCounter::compile_data(&mut test_data, true);
 
         assert_eq!(resultant_values, expected_values);
     }

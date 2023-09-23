@@ -3,7 +3,9 @@ pub mod macro_counter;
 
 use common::display_data::DisplayData;
 use common::pathing::Pathing;
+use common::predefined;
 use macro_counter::MacroCounter;
+use regex::Regex;
 use std::io;
 use std::process::exit;
 
@@ -25,14 +27,15 @@ fn main() {
     };
 
     println!(
-        "\n(mf)  - Modify file\
+        "\n\n(mf)  - Modify file\
         \n(dpf) - Display previous files\
         \n(dpm) - Display previous monthly data\
         \n(df)  - Display file\
         \n(dm)  - Display monthly data\
         \n(pd)  - Predefined meals\
         \n(m#)  - Append predefined meal m#\
-        \n(q)   - Quit the program"
+        \n(q)   - Quit the program\
+        \n\nOperation:"
     );
 
     loop {
@@ -43,7 +46,7 @@ fn main() {
 
         if operation.contains("mf") {
             println!(
-                "\n(rl#) - Removes the last n file entry lines\
+                "\n\n(rl#)  - Removes the last n file entry lines\
                 \n(rlq#) - Removes the last n file entry lines and quit\
                 \n(q)    - Quit the loop\
                 \nPress any key to continue"
@@ -59,12 +62,14 @@ fn main() {
 
         if operation.contains("dpf") {
             let parent_dir = String::from("/home/vallen/Workspace/rust_macro_counter/data_files");
-            DisplayData::display_previous_data(&mut display_data, parent_dir, false);
+            DisplayData::display_previous_data(&mut display_data, parent_dir, false, false);
         }
+
         if operation.contains("dpm") {
             let parent_dir = String::from("/home/vallen/Workspace/rust_macro_counter/data_files");
-            DisplayData::display_previous_data(&mut display_data, parent_dir, true);
+            DisplayData::display_previous_data(&mut display_data, parent_dir, true, false);
         }
+
         if operation.contains("df") {
             DisplayData::display_data(&display_data, None);
         }
@@ -73,10 +78,36 @@ fn main() {
             DisplayData::display_monthly_data(&mut display_data);
         }
 
-        // TODO: predefined_meals
-        // if operation.contains("pd") {}
-        // let re = Regex::new(r"m[0-9]+").unwrap();
-        // if re.is_match(operation) {}
+        if operation.contains("pd") {
+            println!(
+                "\n\n(cf)  - Create new predefined meal\
+                \n(mf)  - Modify predefined meal\
+                \n(df)  - Display predefined meals\
+                \n(q)   - Quit the loop"
+            );
+            predefined::predefined();
+        }
+
+        let re = Regex::new(r"m[0-9]+").unwrap();
+        if re.is_match(&operation) {
+            // The 1st call to MacroCounter::compile_data() is to save data
+            // already in the file.
+            MacroCounter::compile_data(&mut macro_counter, true);
+
+            let predefined_file = format!(
+                "/home/vallen/Workspace/rust_macro_counter/predefined_meals/{}.txt",
+                &operation.to_string()[0..operation.len() - 1]
+            );
+            macro_counter.file_path.clear();
+            macro_counter.file_path.push_str(&predefined_file);
+            // The 2nd call to MacroCounter::compile_data() is to append data read
+            // from the predefined_file and aggregate it to the MacroCounter struct fields.
+            MacroCounter::compile_data(&mut macro_counter, false);
+
+            macro_counter.file_path.clear();
+            macro_counter.file_path.push_str(&pathing.file_path.clone());
+            MacroCounter::write_file(&mut macro_counter);
+        }
 
         if operation.contains("q") {
             exit(0);

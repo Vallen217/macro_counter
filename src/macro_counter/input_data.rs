@@ -9,6 +9,8 @@ impl MacroCounter {
         self.push_data(String::from("Protein: "), MacroType::Protein);
         // save newly gathered data to the file,
         self.write_file();
+
+        println!("\n(Press enter to continue)\nOperation:");
         return self.get_operation();
     }
 
