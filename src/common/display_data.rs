@@ -12,14 +12,19 @@ pub struct DisplayData {
 }
 
 impl DisplayData {
-    pub fn display_data(&self, previous_data: Option<String>) {
+    pub fn display_file(&self, previous_data: Option<String>) {
         let file_path = match previous_data {
             Some(file_path) => file_path,
             None => self.file_path.clone(),
         };
 
-        let data = fs::read_to_string(file_path).expect("Error: Invalid file.");
-        println!("\n{}", data);
+        match fs::read_to_string(&file_path) {
+            Ok(data) => println!("\n{}", data),
+            Err(_) => {
+                println!("Error: unable to read '{}'", file_path);
+                return crate::main();
+            }
+        };
     }
 }
 
@@ -43,6 +48,6 @@ mod unit_tests {
     #[test]
     fn test_display_data() {
         let test_data = instantiate_display_data();
-        DisplayData::display_data(&test_data, None);
+        DisplayData::display_file(&test_data, None);
     }
 }

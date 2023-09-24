@@ -59,22 +59,34 @@ impl MacroCounter {
             pad_word("Carb:"),
             pad_word("Protein:")
         );
-        fs::write(&self.file_path, top_file_line).expect("Error: Reading file");
+        fs::write(&self.file_path, top_file_line).expect("Error: unable to write to file.");
 
-        let mut append_file = OpenOptions::new()
+        let mut append_file = match OpenOptions::new()
             .write(true)
             .append(true)
             .open(&self.file_path)
-            .unwrap();
+        {
+            Ok(append_file) => append_file,
+            Err(err) => {
+                dbg!(err);
+                panic!("Error: opening '{}'", &self.file_path);
+            }
+        };
 
         for i in 0..self.calorie.len() {
             append_file
                 .write("\n".as_bytes())
-                .expect("Error: Failed to write to file.");
+                .expect("Error: unable to write to file.");
 
             for j in 0..4 {
                 let macro_string = self.generate_macro_string(j, i);
-                append_file.write(macro_string.as_bytes()).unwrap();
+                match append_file.write(macro_string.as_bytes()) {
+                    Ok(macro_string) => macro_string,
+                    Err(err) => {
+                        dbg!(err);
+                        panic!("Error: writing data to '{}'", &self.file_path);
+                    }
+                };
             }
         }
 
@@ -98,7 +110,13 @@ impl MacroCounter {
             rel_percentage[1],
             rel_percentage[2]
         );
-        append_file.write(string_totals.as_bytes()).unwrap();
+        match append_file.write(string_totals.as_bytes()) {
+            Ok(string_totals) => string_totals,
+            Err(err) => {
+                dbg!(err);
+                panic!("Error: writing data to '{}'", &self.file_path);
+            }
+        };
         // NOTE: disabled for testing.
         // return self.get_operation();
     }

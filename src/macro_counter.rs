@@ -29,7 +29,13 @@ impl MacroCounter {
             self.protein.clear();
         }
 
-        let file_data = fs::read_to_string(self.file_path.clone()).unwrap();
+        let file_data = match fs::read_to_string(self.file_path.clone()) {
+            Ok(file_data) => file_data,
+            Err(err) => {
+                dbg!(err);
+                panic!("Error: reading '{}'", &self.file_path);
+            }
+        };
 
         for line in file_data.lines() {
             if line.is_empty() {
@@ -46,7 +52,13 @@ impl MacroCounter {
                     }
 
                     // converting file data into compilable numbers.
-                    let datum: f32 = datum.parse().unwrap();
+                    let datum: f32 = match datum.parse() {
+                        Ok(data) => data,
+                        Err(error) => {
+                            dbg!(error);
+                            panic!("Error: compiling datum: '{}'", datum);
+                        }
+                    };
 
                     match iter {
                         0 => self.calorie.push(datum),
@@ -62,7 +74,13 @@ impl MacroCounter {
 
     pub fn get_operation(&mut self) {
         let mut operation = String::new();
-        io::stdin().read_line(&mut operation).unwrap();
+        match io::stdin().read_line(&mut operation) {
+            Ok(oper) => oper,
+            Err(_) => {
+                println!("Error: unable to read operation '{}'", operation);
+                return self.get_operation();
+            }
+        };
 
         if operation.trim() == "q" {
             return crate::main();
@@ -83,10 +101,22 @@ impl MacroCounter {
     fn remove_data(&mut self, operation: String) {
         loop {
             let iter: i8 = if operation.contains("q") {
-                operation.clone().trim()[3..].parse().unwrap()
+                match operation.clone().trim()[3..].parse() {
+                    Ok(data) => data,
+                    Err(error) => {
+                        dbg!(error);
+                        panic!("Error: parsing operation '{}'", operation);
+                    }
+                }
             } else {
                 println!("{}", operation.clone().trim());
-                operation.clone().trim()[2..].parse().unwrap()
+                match operation.clone().trim()[2..].parse() {
+                    Ok(data) => data,
+                    Err(error) => {
+                        dbg!(error);
+                        panic!("Error: parsing operation '{}'", operation);
+                    }
+                }
             };
 
             for _ in 0..iter {

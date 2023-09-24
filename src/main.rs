@@ -40,9 +40,7 @@ fn main() {
 
     loop {
         let mut operation = String::new();
-        io::stdin()
-            .read_line(&mut operation)
-            .expect("Error: failed to read stdin.");
+        io::stdin().read_line(&mut operation).unwrap();
 
         if operation.contains("mf") {
             println!(
@@ -62,16 +60,16 @@ fn main() {
 
         if operation.contains("dpf") {
             let parent_dir = String::from("/home/vallen/Workspace/rust_macro_counter/data_files");
-            DisplayData::display_previous_data(&mut display_data, parent_dir, false, false);
+            DisplayData::display_previous_file(&mut display_data, parent_dir, false, false);
         }
 
         if operation.contains("dpm") {
             let parent_dir = String::from("/home/vallen/Workspace/rust_macro_counter/data_files");
-            DisplayData::display_previous_data(&mut display_data, parent_dir, true, false);
+            DisplayData::display_previous_file(&mut display_data, parent_dir, true, false);
         }
 
         if operation.contains("df") {
-            DisplayData::display_data(&display_data, None);
+            DisplayData::display_file(&display_data, None);
         }
 
         if operation.contains("dm") {

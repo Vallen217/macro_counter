@@ -8,7 +8,13 @@ pub struct Pathing {
 
 impl Pathing {
     pub fn create_file(&self) {
-        fs::create_dir_all(&self.dir_path).unwrap();
+        match fs::create_dir_all(&self.dir_path) {
+            Ok(_) => (),
+            Err(err) => {
+                dbg!(err);
+                panic!("Error: creating '{}'", self.dir_path);
+            }
+        };
 
         let _ = fs::OpenOptions::new()
             .write(true)

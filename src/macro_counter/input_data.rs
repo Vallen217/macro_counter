@@ -17,9 +17,7 @@ impl MacroCounter {
     fn push_data(&mut self, macro_stdin: String, macro_type: MacroType) {
         println!("{}", macro_stdin);
         let mut macro_data = String::new();
-        io::stdin()
-            .read_line(&mut macro_data)
-            .expect("Error: failed to read stdin.");
+        io::stdin().read_line(&mut macro_data).unwrap();
 
         let float_data: f32 = match macro_data.trim().parse() {
             Ok(num) => num,

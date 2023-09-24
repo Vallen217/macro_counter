@@ -9,7 +9,13 @@ impl DisplayData {
         self.macro_totals.clear();
         self.totals.clear();
 
-        let directory = fs::read_dir(&self.dir_path).unwrap();
+        let directory = match fs::read_dir(&self.dir_path) {
+            Ok(dir) => dir,
+            Err(err) => {
+                dbg!(err);
+                panic!("Error: unable to read '{}'", self.dir_path);
+            }
+        };
 
         // generate initial `self.macro_totals` sub-vectors to deter index errors.
         for _ in 0..4 {
@@ -47,7 +53,13 @@ impl DisplayData {
     // parses data gathered from DisplayData::compile_data()
     // into pieces of data we want to disply and returns them as Strings.
     fn parse_monthly_data(&mut self) -> (Vec<String>, Vec<String>) {
-        let dir = fs::read_dir(&self.dir_path).unwrap();
+        let dir = match fs::read_dir(&self.dir_path) {
+            Ok(dir) => dir,
+            Err(err) => {
+                dbg!(err);
+                panic!("Error: unable to read '{}'", self.dir_path);
+            }
+        };
         // get the number of files in the dir to calculate various monthly means.
         let mut dir_len: f32 = 0.0;
         for _ in dir {

@@ -8,10 +8,22 @@ pub fn predefined() {
     println!("\nOperation:");
 
     let dir_path = String::from("/home/vallen/Workspace/rust_macro_counter/predefined_meals");
-    let directory = fs::read_dir(dir_path.clone()).unwrap();
+    let directory = match fs::read_dir(dir_path.clone()) {
+        Ok(dir) => dir,
+        Err(err) => {
+            dbg!(err);
+            panic!("Error: unable to read: '{}'", dir_path);
+        }
+    };
 
     let mut operation = String::new();
-    io::stdin().read_line(&mut operation).unwrap();
+    match io::stdin().read_line(&mut operation) {
+        Ok(oper) => oper,
+        Err(_) => {
+            println!("Error: unable to read operation '{}'", operation);
+            return predefined();
+        }
+    };
 
     if operation.contains("q") {
         return crate::main();
@@ -32,7 +44,13 @@ pub fn predefined() {
     }
 
     if operation.contains("mf") {
-        let directory = fs::read_dir(&dir_path).unwrap();
+        let directory = match fs::read_dir(&dir_path) {
+            Ok(dir) => dir,
+            Err(err) => {
+                dbg!(err);
+                panic!("Error: unable to read: '{}'", dir_path);
+            }
+        };
 
         println!("\nEnter a relative file path to modify from:");
         for file in directory {
@@ -40,7 +58,13 @@ pub fn predefined() {
         }
 
         let mut file_name = String::new();
-        io::stdin().read_line(&mut file_name).unwrap();
+        match io::stdin().read_line(&mut file_name) {
+            Ok(file_name) => file_name,
+            Err(_) => {
+                println!("Error: unable to read '{}'", file_name);
+                return predefined();
+            }
+        };
 
         let file_path: String = if file_name.contains(".txt") {
             format!("{}/{}", dir_path, &file_name[0..file_name.len() - 1])
@@ -72,7 +96,7 @@ pub fn predefined() {
             macro_totals: vec![],
             totals: Vec::new(),
         };
-        DisplayData::display_previous_data(&mut display_data, dir_path, false, true);
+        DisplayData::display_previous_file(&mut display_data, dir_path, false, true);
     }
 
     return predefined();
