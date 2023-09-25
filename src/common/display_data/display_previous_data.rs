@@ -1,5 +1,6 @@
 use super::*;
-use std::{fs, io};
+use crate::pathing;
+use std::{fs, io, process};
 
 impl DisplayData {
     fn generate_previous_path(
@@ -33,9 +34,14 @@ impl DisplayData {
                 }
             };
 
+            // for user to quit early
+            if dir.contains("q") {
+                process::exit(0);
+            }
+
             let dir_path = format!("{}/{}", parent_dir, &dir[0..dir.len() - 1]);
 
-            if !Pathing::file_exists(&dir_path) {
+            if !pathing::file_exists(&dir_path) {
                 println!("\nError: invalid directory");
                 return self.generate_previous_path(parent_dir, monthly_data, predefined);
             } else {
@@ -47,13 +53,15 @@ impl DisplayData {
             return dir_path;
         }
 
-        let directory = match fs::read_dir(&parent_dir) {
+        let directory = match fs::read_dir(&dir_path) {
             Ok(dir) => dir,
             Err(err) => {
                 dbg!(err);
                 panic!("Error: unable to read '{}'", parent_dir);
             }
         };
+
+        println!("");
         for file in directory {
             println!("{}", file.unwrap().path().display());
         }
@@ -67,13 +75,18 @@ impl DisplayData {
             }
         };
 
+        // for user to quit early
+        if file_name.contains("q") {
+            process::exit(0);
+        }
+
         let file_path: String = if file_name.contains(".txt") {
             format!("{}/{}", dir_path, &file_name[0..file_name.len() - 1])
         } else {
             format!("{}/{}.txt", dir_path, &file_name[0..file_name.len() - 1])
         };
 
-        if !Pathing::file_exists(&file_path) {
+        if !pathing::file_exists(&file_path) {
             println!("\nError: invalid file");
             return self.generate_previous_path(parent_dir, monthly_data, predefined);
         }

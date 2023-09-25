@@ -1,0 +1,8 @@
+Cal:        Fat:        Carb:       Protein:    
+15          15g          15g          15g
+1203        2g           124g         189023g
+0           0g           0g           0g
+
+Total Amounts & Relative Percentages:
+15          15g         15g         15g
+            33.3%       33.3%       33.3%       

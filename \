@@ -146,7 +146,9 @@ mod integration_test {
         let expected_values: Vec<f32> = vec![770.0, 39.0, 87.0, 59.0];
         let resultant_values: Vec<f32> = test_data.totals.clone();
 
+        dbg!(&test_data);
         remove_test_data(test_data, 3);
+        panic!();
         assert_eq!(expected_values, resultant_values);
     }
 }

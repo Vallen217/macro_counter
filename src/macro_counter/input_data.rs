@@ -15,7 +15,7 @@ impl MacroCounter {
     }
 
     fn push_data(&mut self, macro_stdin: String, macro_type: MacroType) {
-        println!("{}", macro_stdin);
+        println!("\n{}", macro_stdin);
         let mut macro_data = String::new();
         io::stdin().read_line(&mut macro_data).unwrap();
 

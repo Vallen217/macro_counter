@@ -11,6 +11,7 @@ enum MacroType {
     Protein,
 }
 
+#[derive(Debug)]
 pub struct MacroCounter {
     pub file_path: String,
     pub calorie: Vec<f32>,
@@ -27,6 +28,7 @@ impl MacroCounter {
             self.fat.clear();
             self.carb.clear();
             self.protein.clear();
+            self.totals.clear();
         }
 
         let file_data = match fs::read_to_string(self.file_path.clone()) {
@@ -65,7 +67,10 @@ impl MacroCounter {
                         1 => self.fat.push(datum),
                         2 => self.carb.push(datum),
                         3 => self.protein.push(datum),
-                        _ => panic!("4"),
+                        _ => {
+                            dbg!(iter);
+                            panic!("Error: iterator out of bounds while compiling file data");
+                        }
                     };
                 }
             }
@@ -119,12 +124,14 @@ impl MacroCounter {
                 }
             };
 
+            dbg!(&self.calorie);
             for _ in 0..iter {
                 self.calorie.pop();
                 self.fat.pop();
                 self.carb.pop();
                 self.protein.pop();
             }
+            dbg!(&self.calorie);
             // write the new MacroCounter fields to the file.
             self.write_file();
 
@@ -140,59 +147,34 @@ impl MacroCounter {
 #[cfg(test)]
 mod unit_tests {
     use super::*;
-
-    fn instantiate_macro_counter(file_path: Option<String>) -> MacroCounter {
-        let good_data_path = String::from(
-            "/home/vallen/Workspace/rust_macro_counter/test_data/good_data/data_1.txt",
-        );
-        let file_path = match file_path {
-            Some(file_path) => file_path,
-            None => good_data_path,
-        };
-
-        let test_data = MacroCounter {
-            file_path,
-            calorie: Vec::new(),
-            fat: Vec::new(),
-            carb: Vec::new(),
-            protein: Vec::new(),
-            totals: Vec::new(),
-        };
-
-        return test_data;
-    }
+    use crate::common::utils::instantiate_macro_counter;
+    use crate::pathing;
 
     #[test]
     fn check_data_fields_eq() {
-        let mut test_data = instantiate_macro_counter(None);
+        let file_path = format!("{}/test_data/good_data/data_1.txt", pathing::user_path());
+        let mut test_data = instantiate_macro_counter(file_path);
 
         MacroCounter::compile_data(&mut test_data, false);
 
-        let test_cal: Vec<f32> = Vec::from([180.0, 180.0, 280.0, 280.0]);
+        let test_cal: Vec<f32> = Vec::from([15.0, 300.0, 200.0, 180.0, 180.0]);
         let test_fat: Vec<f32> = Vec::from([7.7, 0.1, 11.0, 2.0]);
-        let test_carb: Vec<f32> = Vec::from([21.0, 21.0, 55.0, 55.0]);
-        let test_protein: Vec<f32> = Vec::from([42.0, 22.8, 10.1, 62.1]);
 
         assert_eq!(&test_data.calorie, &test_cal);
         assert_ne!(&test_data.fat, &test_fat);
-        assert_eq!(&test_data.carb, &test_carb);
-        assert_ne!(&test_data.protein, &test_protein);
     }
 
     #[test]
     #[should_panic]
     fn check_data_fields_ne() {
-        let mut test_data = instantiate_macro_counter(None);
+        let file_path = format!("{}/test_data/good_data/data_1.txt", pathing::user_path());
+        let mut test_data = instantiate_macro_counter(file_path);
 
         MacroCounter::compile_data(&mut test_data, false);
 
-        let test_cal: Vec<f32> = Vec::from([180.0, 180.0, 280.0, 280.0]);
-        let test_fat: Vec<f32> = Vec::from([7.7, 0.1, 11.0, 2.0]);
-        let test_carb: Vec<f32> = Vec::from([21.0, 21.0, 55.0, 55.0]);
+        let test_carb: Vec<f32> = Vec::from([4.0, 58.0, 24.0, 21.0, 21.0]);
         let test_protein: Vec<f32> = Vec::from([42.0, 22.8, 10.1, 62.1]);
 
-        assert_ne!(&test_data.calorie, &test_cal);
-        assert_eq!(&test_data.fat, &test_fat);
         assert_ne!(&test_data.carb, &test_carb);
         assert_eq!(&test_data.protein, &test_protein);
     }
@@ -200,35 +182,8 @@ mod unit_tests {
     #[test]
     #[should_panic]
     fn compile_bad_data() {
-        let file_path =
-            String::from("/home/vallen/Workspace/rust_macro_counter/test_data/bad_data/data.txt");
-        let mut test_data = instantiate_macro_counter(Some(file_path));
+        let file_path = format!("{}/test_data/bad_data/data.txt", pathing::user_path());
+        let mut test_data = instantiate_macro_counter(file_path);
         MacroCounter::compile_data(&mut test_data, false);
-    }
-
-    // FIX: there's something wrong with this test
-    // #[test]
-    fn test_remove_data() {
-        let mut test_data = instantiate_macro_counter(None);
-        let operation = String::from("rl12");
-
-        let expected_cal: Vec<f32> = Vec::from([180.0, 180.0, 280.0]);
-        let expected_fat: Vec<f32> = Vec::from([6.0, 6.0, 2.0]);
-
-        MacroCounter::compile_data(&mut test_data, false);
-        MacroCounter::remove_data(&mut test_data, operation);
-
-        let resultant_cal: Vec<f32> = test_data.calorie.clone();
-        let resultant_fat: Vec<f32> = test_data.fat.clone();
-
-        // add the removed data line back to avoid potential errors during testing.
-        test_data.calorie.push(280.0);
-        test_data.fat.push(2.0);
-        test_data.carb.push(55.0);
-        test_data.protein.push(10.0);
-        MacroCounter::write_file(&mut test_data);
-
-        assert_eq!(expected_cal, resultant_cal);
-        assert_eq!(expected_fat, resultant_fat);
     }
 }

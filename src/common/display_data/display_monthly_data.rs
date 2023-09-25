@@ -122,18 +122,16 @@ impl DisplayData {
         for val in monthly_rel_percent.iter() {
             print!("{}{}", val, pad_word(&val));
         }
-
-        println!("\n");
     }
 }
 
 #[cfg(test)]
 pub mod unit_tests {
     use super::*;
+    use crate::pathing;
 
     fn instantiate_display_data() -> DisplayData {
-        let dir_path =
-            String::from("/home/vallen/Workspace/rust_macro_counter/test_data/good_data/");
+        let dir_path = format!("{}/test_data/good_data/", pathing::user_path());
         let test_data = DisplayData {
             file_path: format!("{}data_1.txt", dir_path),
             dir_path,
@@ -150,10 +148,10 @@ pub mod unit_tests {
         DisplayData::compile_monthly_data(&mut test_data);
 
         let mut expected_value: Vec<f32> = Vec::new();
-        expected_value.push(1795.0);
-        expected_value.push(34.0);
-        expected_value.push(280.0);
-        expected_value.push(98.0);
+        expected_value.push(2555.0);
+        expected_value.push(63.0);
+        expected_value.push(357.0);
+        expected_value.push(147.0);
 
         assert_eq!(test_data.totals, expected_value);
     }
@@ -164,9 +162,9 @@ pub mod unit_tests {
         let resultant_values = DisplayData::compile_monthly_data(&mut test_data);
 
         let mut expected_value: Vec<String> = Vec::new();
-        expected_value.push("897.5".to_string());
-        expected_value.push("17.0".to_string());
-        expected_value.push("140.0".to_string());
+        expected_value.push("851.7".to_string());
+        expected_value.push("21.0".to_string());
+        expected_value.push("119.0".to_string());
         expected_value.push("49.0".to_string());
 
         assert_eq!(resultant_values.0, expected_value);
@@ -178,9 +176,9 @@ pub mod unit_tests {
         let resultant_values = DisplayData::compile_monthly_data(&mut test_data);
 
         let mut expected_value: Vec<String> = Vec::new();
-        expected_value.push("8.3%".to_string());
-        expected_value.push("68.0%".to_string());
-        expected_value.push("23.8%".to_string());
+        expected_value.push("11.1%".to_string());
+        expected_value.push("63.0%".to_string());
+        expected_value.push("25.9%".to_string());
 
         assert_eq!(resultant_values.1, expected_value);
     }

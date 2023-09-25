@@ -45,7 +45,10 @@ impl MacroCounter {
                 let temp_macro_string: String = format!("{}g", self.protein[i]);
                 temp_macro_string
             }
-            _ => panic!("4"),
+            _ => {
+                dbg!(j);
+                panic!("Error: iterator out of bounds while parsing file data");
+            }
         };
 
         return macro_string;
@@ -91,6 +94,8 @@ impl MacroCounter {
         }
 
         let rel_percentage = self.compile_totals();
+        // self.compile_data(false);
+
         let total_calorie = format!("{}", self.totals[0]);
         let total_fat = format!("{}g", self.totals[1]);
         let total_carb = format!("{}g", self.totals[2]);
@@ -117,7 +122,6 @@ impl MacroCounter {
                 panic!("Error: writing data to '{}'", &self.file_path);
             }
         };
-        // NOTE: disabled for testing.
         // return self.get_operation();
     }
 }
@@ -125,60 +129,39 @@ impl MacroCounter {
 #[cfg(test)]
 mod unit_tests {
     use super::*;
-
-    fn instantiate_macro_counter(file_path: Option<String>) -> MacroCounter {
-        let good_data_path = String::from(
-            "/home/vallen/Workspace/rust_macro_counter/test_data/good_data/data_1.txt",
-        );
-
-        let file_path = match file_path {
-            Some(file_path) => file_path,
-            None => good_data_path,
-        };
-
-        let test_data = MacroCounter {
-            file_path,
-            calorie: Vec::new(),
-            fat: Vec::new(),
-            carb: Vec::new(),
-            protein: Vec::new(),
-            totals: Vec::new(),
-        };
-
-        return test_data;
-    }
+    use crate::common::utils::instantiate_macro_counter;
+    use crate::pathing;
 
     #[test]
     fn test_write_file() {
-        let mut test_data = instantiate_macro_counter(None);
+        let file_path = format!("{}/test_data/good_data/data_2.txt", pathing::user_path());
+        let mut test_data = instantiate_macro_counter(file_path);
 
         MacroCounter::compile_data(&mut test_data, false);
         MacroCounter::write_file(&mut test_data);
-        dbg!(&test_data.calorie);
-        MacroCounter::compile_data(&mut test_data, true);
-        dbg!(&test_data.calorie);
     }
 
     #[test]
     fn check_macro_counter_totals() {
-        let mut test_data = instantiate_macro_counter(None);
+        let file_path = format!("{}/test_data/good_data/data_2.txt", pathing::user_path());
+        let mut test_data = instantiate_macro_counter(file_path);
         let expected_values: Vec<f32> = vec![920.0, 16.0, 152.0, 44.0];
 
+        dbg!(&test_data);
         MacroCounter::compile_data(&mut test_data, false);
         MacroCounter::compile_totals(&mut test_data);
-        MacroCounter::compile_data(&mut test_data, true);
 
         assert_eq!(test_data.totals, expected_values);
     }
 
     #[test]
     fn check_macro_percents() {
-        let mut test_data = instantiate_macro_counter(None);
+        let file_path = format!("{}/test_data/good_data/data_2.txt", pathing::user_path());
+        let mut test_data = instantiate_macro_counter(file_path);
         let expected_values: Vec<&str> = vec!["7.5%        ", "71.7%       ", "20.8%       "];
 
         MacroCounter::compile_data(&mut test_data, false);
         let resultant_values: Vec<String> = MacroCounter::compile_totals(&mut test_data);
-        MacroCounter::compile_data(&mut test_data, true);
 
         assert_eq!(resultant_values, expected_values);
     }

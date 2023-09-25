@@ -2,28 +2,21 @@ mod common;
 pub mod macro_counter;
 
 use common::display_data::DisplayData;
-use common::pathing::Pathing;
+use common::pathing::{self, Pathing};
 use common::predefined;
+use common::utils::*;
 use macro_counter::MacroCounter;
 use regex::Regex;
-use std::io;
-use std::process::exit;
+use std::{io, process::exit};
 
 fn main() {
     let pathing = Pathing::generate_file_path();
-    let mut macro_counter = MacroCounter {
-        file_path: pathing.file_path.clone(),
-        calorie: Vec::new(),
-        fat: Vec::new(),
-        carb: Vec::new(),
-        protein: Vec::new(),
-        totals: Vec::new(),
-    };
-    let mut display_data = DisplayData {
-        file_path: pathing.file_path.clone(),
-        dir_path: pathing.dir_path.clone(),
-        macro_totals: vec![],
-        totals: Vec::new(),
+    let mut macro_counter = instantiate_macro_counter(pathing.file_path.clone());
+    let mut display_data =
+        instantiate_display_data(pathing.file_path.clone(), pathing.dir_path.clone());
+    let user_dir = match dirs::home_dir() {
+        Some(dir) => dir,
+        None => panic!("Error: unable to determine $HOME directory"),
     };
 
     println!(
@@ -55,25 +48,35 @@ fn main() {
             // and push it to macro_counter_fields first,
             // inorder to modify file without loosing prexisting data.
             MacroCounter::compile_data(&mut macro_counter, false);
-            MacroCounter::get_operation(&mut macro_counter);
+            return MacroCounter::get_operation(&mut macro_counter);
         }
 
         if operation.contains("dpf") {
-            let parent_dir = String::from("/home/vallen/Workspace/rust_macro_counter/data_files");
+            let parent_dir = format!(
+                "{}/Documents/Health/Macronutritional_Intake",
+                user_dir.to_str().unwrap()
+            );
             DisplayData::display_previous_file(&mut display_data, parent_dir, false, false);
+            println!("\nOperation:");
         }
 
         if operation.contains("dpm") {
-            let parent_dir = String::from("/home/vallen/Workspace/rust_macro_counter/data_files");
+            let parent_dir = format!(
+                "{}/Documents/Health/Macronutritional_Intake",
+                user_dir.to_str().unwrap()
+            );
             DisplayData::display_previous_file(&mut display_data, parent_dir, true, false);
+            println!("\n\nOperation:");
         }
 
         if operation.contains("df") {
             DisplayData::display_file(&display_data, None);
+            println!("\nOperation:");
         }
 
         if operation.contains("dm") {
             DisplayData::display_monthly_data(&mut display_data);
+            println!("\n\nOperation:");
         }
 
         if operation.contains("pd") {
@@ -83,7 +86,7 @@ fn main() {
                 \n(df)  - Display predefined meals\
                 \n(q)   - Quit the loop"
             );
-            predefined::predefined();
+            return predefined::predefined();
         }
 
         let re = Regex::new(r"m[0-9]+").unwrap();
@@ -93,11 +96,13 @@ fn main() {
             MacroCounter::compile_data(&mut macro_counter, true);
 
             let predefined_file = format!(
-                "/home/vallen/Workspace/rust_macro_counter/predefined_meals/{}.txt",
+                "{}/predefined_meals/{}.txt",
+                pathing::user_path(),
                 &operation.to_string()[0..operation.len() - 1]
             );
             macro_counter.file_path.clear();
             macro_counter.file_path.push_str(&predefined_file);
+
             // The 2nd call to MacroCounter::compile_data() is to append data read
             // from the predefined_file and aggregate it to the MacroCounter struct fields.
             MacroCounter::compile_data(&mut macro_counter, false);
@@ -105,9 +110,12 @@ fn main() {
             macro_counter.file_path.clear();
             macro_counter.file_path.push_str(&pathing.file_path.clone());
             MacroCounter::write_file(&mut macro_counter);
+
+            println!("\nOperation:");
         }
 
         if operation.contains("q") {
+            println!("");
             exit(0);
         }
     }

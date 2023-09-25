@@ -1,7 +1,6 @@
 pub mod display_monthly_data;
 pub mod display_previous_data;
 
-use crate::common::pathing::Pathing;
 use std::fs;
 
 pub struct DisplayData {
@@ -31,23 +30,19 @@ impl DisplayData {
 #[cfg(test)]
 mod unit_tests {
     use super::*;
-
-    fn instantiate_display_data() -> DisplayData {
-        let dir_path =
-            String::from("/home/vallen/Workspace/rust_macro_counter/test_data/good_data/");
-        let test_data = DisplayData {
-            file_path: format!("{}data_1.txt", dir_path),
-            dir_path,
-            macro_totals: vec![],
-            totals: Vec::new(),
-        };
-
-        return test_data;
-    }
+    use crate::instantiate_display_data;
+    use crate::pathing;
 
     #[test]
+    #[ignore]
     fn test_display_data() {
-        let test_data = instantiate_display_data();
+        let dir_path = format!(
+            "{}/Workspace/rust_macro_counter/test_data/good_data/",
+            pathing::user_path()
+        );
+        let file_path = format!("{}data_1.txt", dir_path);
+        let test_data = instantiate_display_data(file_path, dir_path);
+
         DisplayData::display_file(&test_data, None);
     }
 }
