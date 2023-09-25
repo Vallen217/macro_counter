@@ -77,33 +77,41 @@ impl MacroCounter {
         }
     }
 
-    pub fn get_operation(&mut self) {
+    pub fn get_operation(&mut self, predefined: bool) {
+        self.compile_data(true);
+
         let mut operation = String::new();
         match io::stdin().read_line(&mut operation) {
             Ok(oper) => oper,
             Err(_) => {
                 println!("Error: unable to read operation '{}'", operation);
-                return self.get_operation();
+                return self.get_operation(false);
             }
         };
 
         if operation.trim() == "q" {
-            return crate::main();
+            match predefined {
+                true => return super::common::predefined::predefined(),
+                false => return crate::main(),
+            };
         }
 
         let re = Regex::new(r"rlq?[0-9]*").unwrap();
         if re.is_match(&operation) {
-            return self.remove_data(operation);
+            return self.remove_data(operation, predefined);
         }
 
         if operation.contains("q") {
-            return crate::main();
+            match predefined {
+                true => return super::common::predefined::predefined(),
+                false => return crate::main(),
+            };
         } else {
-            return self.collect_data();
+            return self.collect_data(predefined);
         }
     }
 
-    fn remove_data(&mut self, operation: String) {
+    fn remove_data(&mut self, operation: String, predefined: bool) {
         loop {
             let iter: i8 = if operation.contains("q") {
                 match operation.clone().trim()[3..].parse() {
@@ -114,7 +122,6 @@ impl MacroCounter {
                     }
                 }
             } else {
-                println!("{}", operation.clone().trim());
                 match operation.clone().trim()[2..].parse() {
                     Ok(data) => data,
                     Err(error) => {
@@ -124,21 +131,19 @@ impl MacroCounter {
                 }
             };
 
-            dbg!(&self.calorie);
             for _ in 0..iter {
                 self.calorie.pop();
                 self.fat.pop();
                 self.carb.pop();
                 self.protein.pop();
             }
-            dbg!(&self.calorie);
             // write the new MacroCounter fields to the file.
             self.write_file();
 
             if operation.trim().contains("q") {
                 break;
             } else {
-                return self.collect_data();
+                return self.collect_data(predefined);
             }
         }
     }

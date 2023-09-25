@@ -2,7 +2,7 @@ use super::*;
 use std::io;
 
 impl MacroCounter {
-    pub fn collect_data(&mut self) {
+    pub fn collect_data(&mut self, predefined: bool) {
         self.push_data(String::from("Calorie: "), MacroType::Calorie);
         self.push_data(String::from("Carb: "), MacroType::Fat);
         self.push_data(String::from("Fat: "), MacroType::Carb);
@@ -11,7 +11,7 @@ impl MacroCounter {
         self.write_file();
 
         println!("\n(Press enter to continue)\nOperation:");
-        return self.get_operation();
+        return self.get_operation(predefined);
     }
 
     fn push_data(&mut self, macro_stdin: String, macro_type: MacroType) {

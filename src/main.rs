@@ -47,8 +47,7 @@ fn main() {
             // so compile_data() must be called to read data from files,
             // and push it to macro_counter_fields first,
             // inorder to modify file without loosing prexisting data.
-            MacroCounter::compile_data(&mut macro_counter, false);
-            return MacroCounter::get_operation(&mut macro_counter);
+            return MacroCounter::get_operation(&mut macro_counter, false);
         }
 
         if operation.contains("dpf") {

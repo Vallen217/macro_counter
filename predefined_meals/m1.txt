@@ -1,8 +1,10 @@
 Cal:        Fat:        Carb:       Protein:    
-5           5g           5g           5g
-0           0g           0g           0g
-5           5g           5g           5g
+15          0g           4g           0g
+300         1g           58g          14g
+200         5g           24g          16g
+180         6g           21g          12g
+180         6g           21g          12g
 
 Total Amounts & Relative Percentages:
-10          10g         10g         10g
-            33.3%       33.3%       33.3%       
+875         18g         128g        54g
+            9.0%        64.0%       27.0%       

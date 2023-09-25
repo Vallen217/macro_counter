@@ -76,8 +76,8 @@ pub fn predefined() {
         };
 
         if !pathing::file_exists(&file_path) {
-            dbg!(&file_path);
-            panic!("Error: Invalid file");
+            println!("Error: Invalid file: {}", &file_path);
+            return predefined();
         }
 
         let mut macro_counter = MacroCounter {
@@ -89,7 +89,7 @@ pub fn predefined() {
             totals: Vec::new(),
         };
         MacroCounter::compile_data(&mut macro_counter, true);
-        MacroCounter::collect_data(&mut macro_counter);
+        MacroCounter::collect_data(&mut macro_counter, true);
     }
 
     if operation.contains("df") {
@@ -122,6 +122,9 @@ mod integration_test {
     }
 
     #[test]
+    #[ignore]
+    // NOTE: this test will fail without a specific predefined file;
+    // which are user relative.
     fn test_predefined() {
         let test_file = format!("{}/test_data/good_data/data_3.txt", pathing::user_path());
         let mut test_data = instantiate_macro_counter(test_file);

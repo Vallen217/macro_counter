@@ -93,8 +93,8 @@ impl MacroCounter {
             }
         }
 
+        self.totals.clear();
         let rel_percentage = self.compile_totals();
-        // self.compile_data(false);
 
         let total_calorie = format!("{}", self.totals[0]);
         let total_fat = format!("{}g", self.totals[1]);
@@ -122,7 +122,6 @@ impl MacroCounter {
                 panic!("Error: writing data to '{}'", &self.file_path);
             }
         };
-        // return self.get_operation();
     }
 }
 
