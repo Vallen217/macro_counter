@@ -122,9 +122,6 @@ mod integration_test {
     }
 
     #[test]
-    #[ignore]
-    // NOTE: this test will fail without a specific predefined file;
-    // which are user relative.
     fn test_predefined() {
         let test_file = format!("{}/test_data/good_data/data_3.txt", pathing::user_path());
         let mut test_data = instantiate_macro_counter(test_file);
@@ -133,7 +130,10 @@ mod integration_test {
         // already in the file.
         MacroCounter::compile_data(&mut test_data, true);
 
-        let predefined_file = format!("{}/predefined_meals/m1.txt", pathing::user_path());
+        let predefined_file = format!(
+            "{}/test_data//predefined_meals/m1.txt",
+            pathing::user_path()
+        );
         test_data.file_path.clear();
         test_data.file_path.push_str(&predefined_file);
 

@@ -1,0 +1,8 @@
+Cal:        Fat:        Carb:       Protein:    
+5           5g           5g           5g
+0           0g           0g           0g
+5           5g           5g           5g
+
+Total Amounts & Relative Percentages:
+10          10g         10g         10g
+            33.3%       33.3%       33.3%       
