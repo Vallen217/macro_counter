@@ -4,8 +4,8 @@ use std::io;
 impl MacroCounter {
     pub fn collect_data(&mut self, predefined: bool) {
         self.push_data(String::from("Calorie: "), MacroType::Calorie);
-        self.push_data(String::from("Carb: "), MacroType::Fat);
-        self.push_data(String::from("Fat: "), MacroType::Carb);
+        self.push_data(String::from("Fat: "), MacroType::Fat);
+        self.push_data(String::from("Carb: "), MacroType::Carb);
         self.push_data(String::from("Protein: "), MacroType::Protein);
         // save newly gathered data to the file,
         self.write_file();
