@@ -1,6 +1,7 @@
 pub mod input_data;
 pub mod write_file;
 
+use crate::common::display_data::DisplayData;
 use regex::Regex;
 use std::{fs, io};
 
@@ -90,6 +91,14 @@ impl MacroCounter {
         };
 
         if operation.trim() == "q" {
+            let mut display_data = DisplayData {
+                file_path: self.file_path.clone(),
+                dir_path: String::new(),
+                macro_totals: vec![],
+                totals: Vec::new(),
+            };
+            DisplayData::display_file(&mut display_data, None);
+
             match predefined {
                 true => return super::common::predefined::predefined(),
                 false => return crate::main(),
@@ -102,6 +111,14 @@ impl MacroCounter {
         }
 
         if operation.contains("q") {
+            let mut display_data = DisplayData {
+                file_path: self.file_path.clone(),
+                dir_path: String::new(),
+                macro_totals: vec![],
+                totals: Vec::new(),
+            };
+            DisplayData::display_file(&mut display_data, None);
+
             match predefined {
                 true => return super::common::predefined::predefined(),
                 false => return crate::main(),

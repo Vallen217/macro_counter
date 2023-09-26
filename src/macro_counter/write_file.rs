@@ -146,7 +146,6 @@ mod unit_tests {
         let mut test_data = instantiate_macro_counter(file_path);
         let expected_values: Vec<f32> = vec![920.0, 16.0, 152.0, 44.0];
 
-        dbg!(&test_data);
         MacroCounter::compile_data(&mut test_data, false);
         MacroCounter::compile_totals(&mut test_data);
 

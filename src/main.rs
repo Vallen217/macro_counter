@@ -14,10 +14,7 @@ fn main() {
     let mut macro_counter = instantiate_macro_counter(pathing.file_path.clone());
     let mut display_data =
         instantiate_display_data(pathing.file_path.clone(), pathing.dir_path.clone());
-    let user_dir = match dirs::home_dir() {
-        Some(dir) => dir,
-        None => panic!("Error: unable to determine $HOME directory"),
-    };
+    let user_dir = pathing::user_path();
 
     println!(
         "\n\n(mf)  - Modify file\
@@ -51,19 +48,13 @@ fn main() {
         }
 
         if operation.contains("dpf") {
-            let parent_dir = format!(
-                "{}/Documents/Health/Macronutritional_Intake",
-                user_dir.to_str().unwrap()
-            );
+            let parent_dir = format!("{}/Documents/Health/Macronutritional_Intake", user_dir);
             DisplayData::display_previous_file(&mut display_data, parent_dir, false, false);
             println!("\nOperation:");
         }
 
         if operation.contains("dpm") {
-            let parent_dir = format!(
-                "{}/Documents/Health/Macronutritional_Intake",
-                user_dir.to_str().unwrap()
-            );
+            let parent_dir = format!("{}/Documents/Health/Macronutritional_Intake", user_dir);
             DisplayData::display_previous_file(&mut display_data, parent_dir, true, false);
             println!("\n\nOperation:");
         }
@@ -95,8 +86,8 @@ fn main() {
             MacroCounter::compile_data(&mut macro_counter, true);
 
             let predefined_file = format!(
-                "{}/predefined_meals/{}.txt",
-                pathing::user_path(),
+                "{}/Documents/Health/Predefined_Meals/{}.txt",
+                user_dir,
                 &operation.to_string()[0..operation.len() - 1]
             );
             macro_counter.file_path.clear();
@@ -109,6 +100,8 @@ fn main() {
             macro_counter.file_path.clear();
             macro_counter.file_path.push_str(&pathing.file_path.clone());
             MacroCounter::write_file(&mut macro_counter);
+
+            DisplayData::display_file(&mut display_data, None);
 
             println!("\nOperation:");
         }

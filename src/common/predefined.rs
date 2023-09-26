@@ -9,7 +9,7 @@ pub fn predefined() {
     println!("\nOperation:");
 
     let user_dir = pathing::user_path();
-    let dir_path = format!("{}/predefined_meals", user_dir);
+    let dir_path = format!("{}/Documents/Health/Predefined_Meals", user_dir);
 
     let directory = match fs::read_dir(dir_path.clone()) {
         Ok(dir) => dir,
