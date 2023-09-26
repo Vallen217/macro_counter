@@ -128,10 +128,10 @@ impl DisplayData {
 #[cfg(test)]
 pub mod unit_tests {
     use super::*;
-    use crate::pathing;
+    use crate::common::utils;
 
     fn instantiate_display_data() -> DisplayData {
-        let dir_path = format!("{}/test_data/good_data/", pathing::user_path());
+        let dir_path = format!("{}/test_data/good_data/", utils::user_test_path());
         let test_data = DisplayData {
             file_path: format!("{}data_1.txt", dir_path),
             dir_path,

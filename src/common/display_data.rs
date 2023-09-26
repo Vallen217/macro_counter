@@ -30,15 +30,15 @@ impl DisplayData {
 #[cfg(test)]
 mod unit_tests {
     use super::*;
+    use crate::common::utils;
     use crate::instantiate_display_data;
-    use crate::pathing;
 
     #[test]
     #[ignore]
     fn test_display_data() {
         let dir_path = format!(
             "{}/Workspace/rust_macro_counter/test_data/good_data/",
-            pathing::user_path()
+            utils::user_test_path()
         );
         let file_path = format!("{}data_1.txt", dir_path);
         let test_data = instantiate_display_data(file_path, dir_path);

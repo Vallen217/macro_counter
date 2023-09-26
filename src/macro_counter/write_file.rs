@@ -128,13 +128,12 @@ impl MacroCounter {
 #[cfg(test)]
 mod unit_tests {
     use super::*;
-    use crate::common::utils::instantiate_macro_counter;
-    use crate::pathing;
+    use crate::common::utils;
 
     #[test]
     fn test_write_file() {
-        let file_path = format!("{}/test_data/good_data/data_2.txt", pathing::user_path());
-        let mut test_data = instantiate_macro_counter(file_path);
+        let file_path = format!("{}/test_data/good_data/data_2.txt", utils::user_test_path());
+        let mut test_data = utils::instantiate_macro_counter(file_path);
 
         MacroCounter::compile_data(&mut test_data, false);
         MacroCounter::write_file(&mut test_data);
@@ -142,8 +141,8 @@ mod unit_tests {
 
     #[test]
     fn check_macro_counter_totals() {
-        let file_path = format!("{}/test_data/good_data/data_2.txt", pathing::user_path());
-        let mut test_data = instantiate_macro_counter(file_path);
+        let file_path = format!("{}/test_data/good_data/data_2.txt", utils::user_test_path());
+        let mut test_data = utils::instantiate_macro_counter(file_path);
         let expected_values: Vec<f32> = vec![920.0, 16.0, 152.0, 44.0];
 
         MacroCounter::compile_data(&mut test_data, false);
@@ -154,8 +153,8 @@ mod unit_tests {
 
     #[test]
     fn check_macro_percents() {
-        let file_path = format!("{}/test_data/good_data/data_2.txt", pathing::user_path());
-        let mut test_data = instantiate_macro_counter(file_path);
+        let file_path = format!("{}/test_data/good_data/data_2.txt", utils::user_test_path());
+        let mut test_data = utils::instantiate_macro_counter(file_path);
         let expected_values: Vec<&str> = vec!["7.5%        ", "71.7%       ", "20.8%       "];
 
         MacroCounter::compile_data(&mut test_data, false);

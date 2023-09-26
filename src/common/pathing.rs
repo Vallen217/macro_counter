@@ -73,15 +73,7 @@ pub fn file_exists(path: &String) -> bool {
     return path::Path::new(&path).exists();
 }
 
-// generates the user's absolute path of `macro_counter`
 pub fn user_path() -> String {
-    // let dir_path = match fs::canonicalize("..") {
-    //     Ok(path) => path,
-    //     Err(err) => {
-    //         dbg!(err);
-    //         panic!();
-    //     }
-    // };
     let dir_path = match dirs::home_dir() {
         Some(dir) => dir,
         None => panic!("Error: unable to determine $HOME directory"),

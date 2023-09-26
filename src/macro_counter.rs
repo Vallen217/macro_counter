@@ -169,13 +169,12 @@ impl MacroCounter {
 #[cfg(test)]
 mod unit_tests {
     use super::*;
-    use crate::common::utils::instantiate_macro_counter;
-    use crate::pathing;
+    use crate::common::utils;
 
     #[test]
     fn check_data_fields_eq() {
-        let file_path = format!("{}/test_data/good_data/data_1.txt", pathing::user_path());
-        let mut test_data = instantiate_macro_counter(file_path);
+        let file_path = format!("{}/test_data/good_data/data_1.txt", utils::user_test_path());
+        let mut test_data = utils::instantiate_macro_counter(file_path);
 
         MacroCounter::compile_data(&mut test_data, false);
 
@@ -189,8 +188,8 @@ mod unit_tests {
     #[test]
     #[should_panic]
     fn check_data_fields_ne() {
-        let file_path = format!("{}/test_data/good_data/data_1.txt", pathing::user_path());
-        let mut test_data = instantiate_macro_counter(file_path);
+        let file_path = format!("{}/test_data/good_data/data_1.txt", utils::user_test_path());
+        let mut test_data = utils::instantiate_macro_counter(file_path);
 
         MacroCounter::compile_data(&mut test_data, false);
 
@@ -204,8 +203,8 @@ mod unit_tests {
     #[test]
     #[should_panic]
     fn compile_bad_data() {
-        let file_path = format!("{}/test_data/bad_data/data.txt", pathing::user_path());
-        let mut test_data = instantiate_macro_counter(file_path);
+        let file_path = format!("{}/test_data/bad_data/data.txt", utils::user_test_path());
+        let mut test_data = utils::instantiate_macro_counter(file_path);
         MacroCounter::compile_data(&mut test_data, false);
     }
 }

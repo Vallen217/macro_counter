@@ -103,8 +103,7 @@ pub fn predefined() {
 #[cfg(test)]
 mod integration_test {
     use super::*;
-    use crate::common::utils::instantiate_macro_counter;
-    use crate::pathing;
+    use crate::common::utils;
 
     // removes whatever data is appended to test files during test_predefined()
     // so it doesn't interfere with other tests.
@@ -123,16 +122,16 @@ mod integration_test {
 
     #[test]
     fn test_predefined() {
-        let test_file = format!("{}/test_data/good_data/data_3.txt", pathing::user_path());
-        let mut test_data = instantiate_macro_counter(test_file);
+        let test_file = format!("{}/test_data/good_data/data_3.txt", utils::user_test_path());
+        let mut test_data = utils::instantiate_macro_counter(test_file);
 
         // The 1st call to MacroCounter::compile_data() is to save data
         // already in the file.
         MacroCounter::compile_data(&mut test_data, true);
 
         let predefined_file = format!(
-            "{}/test_data//predefined_meals/m1.txt",
-            pathing::user_path()
+            "{}/test_data/predefined_meals/m1.txt",
+            utils::user_test_path()
         );
         test_data.file_path.clear();
         test_data.file_path.push_str(&predefined_file);
@@ -141,7 +140,7 @@ mod integration_test {
         // from the predefined_file and aggregate it to the MacroCounter struct fields.
         MacroCounter::compile_data(&mut test_data, false);
 
-        let test_file = format!("{}/test_data/good_data/data_3.txt", pathing::user_path());
+        let test_file = format!("{}/test_data/good_data/data_3.txt", utils::user_test_path());
         test_data.file_path.clear();
         test_data.file_path.push_str(&test_file);
         MacroCounter::write_file(&mut test_data);
