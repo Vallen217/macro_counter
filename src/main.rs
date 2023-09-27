@@ -18,10 +18,10 @@ fn main() {
 
     println!(
         "\n\n(mf)  - Modify file\
-        \n(dpf) - Display previous files\
-        \n(dpm) - Display previous monthly data\
         \n(df)  - Display file\
         \n(dm)  - Display monthly data\
+        \n(dpf) - Display previous files\
+        \n(dpm) - Display previous monthly data\
         \n(pd)  - Predefined meals\
         \n(m#)  - Append predefined meal m#\
         \n(q)   - Quit the program\
@@ -34,9 +34,9 @@ fn main() {
 
         if operation.contains("mf") {
             println!(
-                "\n\n(rl#)  - Removes the last n file entry lines\
-                \n(rlq#) - Removes the last n file entry lines and quit\
-                \n(q)    - Quit the loop\
+                "\n\n(rl#)  - Remove the last 'n' file entry lines\
+                \n(rlq#) - Remove the last 'n' file entry lines and quit\
+                \n(q)    - Quit the 'mf' loop\
                 \nPress any key to continue"
             );
 
@@ -45,6 +45,16 @@ fn main() {
             // and push it to macro_counter_fields first,
             // inorder to modify file without loosing prexisting data.
             return MacroCounter::get_operation(&mut macro_counter, false);
+        }
+
+        if operation.contains("df") {
+            DisplayData::display_file(&display_data, None);
+            println!("\nOperation:");
+        }
+
+        if operation.contains("dm") {
+            DisplayData::display_monthly_data(&mut display_data);
+            println!("\n\nOperation:");
         }
 
         if operation.contains("dpf") {
@@ -59,22 +69,12 @@ fn main() {
             println!("\n\nOperation:");
         }
 
-        if operation.contains("df") {
-            DisplayData::display_file(&display_data, None);
-            println!("\nOperation:");
-        }
-
-        if operation.contains("dm") {
-            DisplayData::display_monthly_data(&mut display_data);
-            println!("\n\nOperation:");
-        }
-
         if operation.contains("pd") {
             println!(
                 "\n\n(cf)  - Create new predefined meal\
                 \n(mf)  - Modify predefined meal\
                 \n(df)  - Display predefined meals\
-                \n(q)   - Quit the loop"
+                \n(q)   - Quit the 'pd' loop"
             );
             return predefined::predefined();
         }
