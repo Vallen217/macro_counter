@@ -32,17 +32,18 @@ pub fn instantiate_display_data(file_path: String, dir_path: String) -> DisplayD
     return display_data;
 }
 
-// pub fn user_test_path() -> String {
-//     let dir_path = match fs::canonicalize("..") {
-//         Ok(path) => path,
-//         Err(err) => {
-//             dbg!(err);
-//             panic!();
-//         }
-//     };
-//
-//     return format!("{}/macro_counter/", dir_path.to_str().unwrap().to_string());
-// }
+#[allow(dead_code)]
+pub fn user_test_path() -> String {
+    let dir_path = match fs::canonicalize("..") {
+        Ok(path) => path,
+        Err(err) => {
+            dbg!(err);
+            panic!();
+        }
+    };
+
+    return format!("{}/macro_counter/", dir_path.to_str().unwrap().to_string());
+}
 
 #[cfg(test)]
 mod unit_tests {
