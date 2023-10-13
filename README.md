@@ -39,6 +39,7 @@ Add/remove data to/from a file.
 
     (rl#)  - Remove the last 'n' file entry lines
     (rlq#) - Remove the last 'n' file entry lines and quit
+    (.)    - Repeat the last data entry line
     (q)    - Quit the 'mf' loop
     (Press any key to continue)
 

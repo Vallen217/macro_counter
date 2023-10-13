@@ -90,6 +90,17 @@ impl MacroCounter {
             }
         };
 
+        if operation.trim() == "." {
+            self.repeat_data_entry(predefined, MacroType::Calorie);
+            self.repeat_data_entry(predefined, MacroType::Fat);
+            self.repeat_data_entry(predefined, MacroType::Carb);
+            self.repeat_data_entry(predefined, MacroType::Protein);
+            self.write_file();
+
+            println!("\n(Press enter to continue)\nOperation:");
+            return self.get_operation(predefined);
+        }
+
         if operation.trim() == "q" {
             let mut display_data = DisplayData {
                 file_path: self.file_path.clone(),
@@ -164,6 +175,33 @@ impl MacroCounter {
             }
         }
     }
+
+    fn repeat_data_entry(&mut self, predefined: bool, macro_type: MacroType) {
+        let macro_datum = match macro_type {
+            MacroType::Calorie => &self.calorie,
+            MacroType::Carb => &self.carb,
+            MacroType::Fat => &self.fat,
+            MacroType::Protein => &self.protein,
+        };
+
+        let datum = match macro_datum.last() {
+            Some(datum) => datum,
+            None => {
+                println!(
+                    "Error: Empty vector field\n
+                    Input data before attempting to repeat a data entry"
+                );
+                return self.get_operation(predefined);
+            }
+        };
+
+        match macro_type {
+            MacroType::Calorie => self.calorie.push(*datum),
+            MacroType::Carb => self.carb.push(*datum),
+            MacroType::Fat => self.fat.push(*datum),
+            MacroType::Protein => self.protein.push(*datum),
+        }
+    }
 }
 
 #[cfg(test)]
@@ -206,5 +244,29 @@ mod unit_tests {
         let file_path = format!("{}/test_data/bad_data/data.txt", utils::user_test_path());
         let mut test_data = utils::instantiate_macro_counter(file_path);
         MacroCounter::compile_data(&mut test_data, false);
+    }
+
+    #[test]
+    fn check_repeat_data_entry() {
+        let file_path = format!("{}/test_data/good_data/data_1.txt", utils::user_test_path());
+        let mut test_data = utils::instantiate_macro_counter(file_path);
+
+        MacroCounter::compile_data(&mut test_data, false);
+
+        let expected_cal: Vec<f32> = Vec::from([15.0, 300.0, 200.0, 180.0, 180.0, 180.0]);
+        let expected_carb: Vec<f32> = Vec::from([4.0, 58.0, 24.0, 21.0, 21.0, 21.0]);
+
+        MacroCounter::repeat_data_entry(&mut test_data, false, MacroType::Calorie);
+        MacroCounter::repeat_data_entry(&mut test_data, false, MacroType::Fat);
+        MacroCounter::repeat_data_entry(&mut test_data, false, MacroType::Carb);
+        MacroCounter::repeat_data_entry(&mut test_data, false, MacroType::Protein);
+
+        assert_eq!(test_data.calorie, expected_cal);
+        assert_eq!(test_data.carb, expected_carb);
+
+        test_data.calorie.pop();
+        test_data.fat.pop();
+        test_data.carb.pop();
+        test_data.protein.pop();
     }
 }

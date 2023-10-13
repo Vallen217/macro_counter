@@ -36,14 +36,11 @@ fn main() {
             println!(
                 "\n\n(rl#)  - Removes the last n file entry lines\
                 \n(rlq#) - Removes the last n file entry lines and quit\
+                \n(.)    - Repeat the last data entry line\
                 \n(q)    - Quit the loop\
                 \nPress any key to continue"
             );
 
-            // macro_counter fields are re-instantiated every program call,
-            // so compile_data() must be called to read data from files,
-            // and push it to macro_counter_fields first,
-            // inorder to modify file without loosing prexisting data.
             return MacroCounter::get_operation(&mut macro_counter, false);
         }
 
