@@ -89,7 +89,15 @@ pub fn predefined() {
             totals: Vec::new(),
         };
         MacroCounter::compile_data(&mut macro_counter, true);
-        MacroCounter::collect_data(&mut macro_counter, true);
+
+        println!(
+            "\n(rl#)  - Removes the last n file entry lines\
+                \n(rlq#) - Removes the last n file entry lines and quit\
+                \n(.)    - Repeat the last data entry line\
+                \n(q)    - Quit the loop\
+                \nPress any key to continue"
+        );
+        MacroCounter::get_operation(&mut macro_counter, true);
     }
 
     if operation.contains("df") {

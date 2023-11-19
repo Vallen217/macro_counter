@@ -150,6 +150,7 @@ impl MacroCounter {
                     }
                 }
             } else {
+                // TODO: remove 1 line if the number of lines to remove is not specified.
                 match operation.clone().trim()[2..].parse() {
                     Ok(data) => data,
                     Err(error) => {
