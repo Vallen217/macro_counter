@@ -142,20 +142,29 @@ impl MacroCounter {
     fn remove_data(&mut self, operation: String, predefined: bool) {
         loop {
             let iter: i8 = if operation.contains("q") {
-                match operation.clone().trim()[3..].parse() {
-                    Ok(data) => data,
-                    Err(error) => {
-                        dbg!(error);
-                        panic!("Error: parsing operation '{}'", operation);
+                // remove 1 file line if the number of lines to remove is not specified.
+                if &operation.trim().len() < &4 {
+                    1
+                } else {
+                    match operation.clone().trim()[3..].parse() {
+                        Ok(data) => data,
+                        Err(error) => {
+                            dbg!(error);
+                            panic!("Error: parsing operation '{}'", operation);
+                        }
                     }
                 }
             } else {
-                // TODO: remove 1 line if the number of lines to remove is not specified.
-                match operation.clone().trim()[2..].parse() {
-                    Ok(data) => data,
-                    Err(error) => {
-                        dbg!(error);
-                        panic!("Error: parsing operation '{}'", operation);
+                // remove 1 file line if the number of lines to remove is not specified.
+                if &operation.trim().len() < &3 {
+                    1
+                } else {
+                    match operation.clone().trim()[2..].parse() {
+                        Ok(data) => data,
+                        Err(error) => {
+                            dbg!(error);
+                            panic!("Error: parsing operation '{}'", operation);
+                        }
                     }
                 }
             };

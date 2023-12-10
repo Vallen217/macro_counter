@@ -2,6 +2,8 @@ use super::DisplayData;
 use crate::common::utils::pad_word;
 use std::fs;
 
+//TODO: if a file's fields are 0 or NaN%, delete it.
+
 impl DisplayData {
     fn compile_monthly_data(&mut self) -> (Vec<String>, Vec<String>) {
         // if DisplayData::compile_monthly_data() is called repeatedly within
