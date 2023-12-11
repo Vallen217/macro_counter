@@ -2,8 +2,6 @@ use super::DisplayData;
 use crate::common::utils::pad_word;
 use std::fs;
 
-//TODO: if a file's fields are 0 or NaN%, delete it.
-
 impl DisplayData {
     fn compile_monthly_data(&mut self) -> (Vec<String>, Vec<String>) {
         // if DisplayData::compile_monthly_data() is called repeatedly within
@@ -29,7 +27,10 @@ impl DisplayData {
             // the 2nd to last line of the file, which has the data we want to compile.
             let mut is_totals_line = false;
 
-            for i in fs::read_to_string(file.unwrap().path()).unwrap().lines() {
+            for i in fs::read_to_string(file.as_ref().unwrap().path())
+                .unwrap()
+                .lines()
+            {
                 if is_totals_line {
                     totals_line.push_str(i);
                     is_totals_line = false;
@@ -44,6 +45,18 @@ impl DisplayData {
             for (i, mut val) in totals_line.split_whitespace().enumerate() {
                 if val.contains("g") {
                     val = &val[0..val.len() - 1];
+                }
+                // delete the file to prevent scewed monthly data
+                // if it exists but contains no real data.
+                if val == 0.to_string() {
+                    match fs::remove_file(file.as_ref().unwrap().path()) {
+                        Ok(_) => {
+                            return self.compile_monthly_data();
+                        }
+                        Err(error) => {
+                            dbg!(error);
+                        }
+                    }
                 }
                 self.macro_totals[i].push(val.parse().unwrap());
             }
