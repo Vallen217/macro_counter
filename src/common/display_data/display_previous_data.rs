@@ -53,6 +53,16 @@ impl DisplayData {
             return dir_path;
         }
 
+        // returns the last directory in the path as the new parent directory
+        // if it is a yearly directory.
+        //
+        // Why? Because I don't want restructure this entire function
+        // to refit the new temporal file separation method.
+        let last_path_dir = dir_path.rsplit_once("/").unwrap().1;
+        if last_path_dir.len() == 4 {
+            return self.generate_previous_path(dir_path, monthly_data, predefined);
+        }
+
         let directory = match fs::read_dir(&dir_path) {
             Ok(dir) => dir,
             Err(err) => {

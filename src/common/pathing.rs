@@ -24,7 +24,6 @@ impl Pathing {
     }
 
     pub fn generate_file_path() -> Pathing {
-        // NOTE: it may become necessary to further separate files into {year}/{month}/{day}
         let user_dir = match dirs::home_dir() {
             Some(dir) => dir,
             None => panic!("Error: unable to determine $HOME directory"),
