@@ -44,9 +44,8 @@ impl DisplayData {
             if !pathing::file_exists(&dir_path) {
                 println!("\nError: invalid directory");
                 return self.generate_previous_path(parent_dir, monthly_data, predefined);
-            } else {
-                dir_path
             }
+            dir_path
         };
 
         if monthly_data && !predefined {
@@ -100,7 +99,7 @@ impl DisplayData {
             println!("\nError: invalid file");
             return self.generate_previous_path(parent_dir, monthly_data, predefined);
         }
-        return file_path;
+        file_path
     }
 
     pub fn display_previous_file(
@@ -115,7 +114,7 @@ impl DisplayData {
             self.dir_path = path;
             DisplayData::display_monthly_data(self);
         } else {
-            return self.display_file(Some(path));
+            self.display_file(Some(path))
         }
     }
 }

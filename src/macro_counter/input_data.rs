@@ -11,7 +11,7 @@ impl MacroCounter {
         self.write_file();
 
         println!("\n(Press enter to continue)\nOperation:");
-        return self.get_operation(predefined);
+        self.get_operation(predefined)
     }
 
     fn push_data(&mut self, macro_stdin: String, macro_type: MacroType) {

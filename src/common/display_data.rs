@@ -21,7 +21,7 @@ impl DisplayData {
             Ok(data) => println!("\n{}", data),
             Err(_) => {
                 println!("Error: unable to read '{}'", file_path);
-                return crate::main();
+                crate::main();
             }
         };
     }

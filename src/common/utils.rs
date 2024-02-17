@@ -5,7 +5,7 @@ use std::fs;
 pub fn pad_word(word: &str) -> String {
     let num_of_spaces = 12 - word.len();
     let padding = " ".repeat(num_of_spaces);
-    return padding;
+    padding
 }
 
 pub fn instantiate_macro_counter(file_path: String) -> MacroCounter {
@@ -18,7 +18,7 @@ pub fn instantiate_macro_counter(file_path: String) -> MacroCounter {
         totals: Vec::new(),
     };
 
-    return macro_counter;
+    macro_counter
 }
 
 pub fn instantiate_display_data(file_path: String, dir_path: String) -> DisplayData {
@@ -29,7 +29,7 @@ pub fn instantiate_display_data(file_path: String, dir_path: String) -> DisplayD
         totals: Vec::new(),
     };
 
-    return display_data;
+    display_data
 }
 
 #[allow(dead_code)]
@@ -42,7 +42,7 @@ pub fn user_test_path() -> String {
         }
     };
 
-    return format!("{}/macro_counter/", dir_path.to_str().unwrap().to_string());
+    format!("{}/macro_counter/", dir_path.to_str().unwrap().to_string())
 }
 
 #[cfg(test)]

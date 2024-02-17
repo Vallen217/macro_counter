@@ -62,7 +62,7 @@ impl DisplayData {
             }
         }
 
-        return self.parse_monthly_data();
+        self.parse_monthly_data()
     }
 
     // parses data gathered from DisplayData::compile_data()
@@ -96,7 +96,7 @@ impl DisplayData {
             ));
         }
 
-        return (monthly_means, monthly_rel_percent);
+        (monthly_means, monthly_rel_percent)
     }
 
     pub fn display_monthly_data(&mut self) {
@@ -154,7 +154,7 @@ pub mod unit_tests {
             totals: Vec::new(),
         };
 
-        return test_data;
+        test_data
     }
 
     #[test]

@@ -18,7 +18,7 @@ impl MacroCounter {
             rel_percentage.push(percent_2.clone());
         }
 
-        return rel_percentage;
+        rel_percentage
     }
 
     fn generate_macro_string(&mut self, j: usize, i: usize) -> String {
@@ -51,7 +51,7 @@ impl MacroCounter {
             }
         };
 
-        return macro_string;
+        macro_string
     }
 
     pub fn write_file(&mut self) {

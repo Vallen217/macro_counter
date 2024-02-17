@@ -105,7 +105,7 @@ pub fn predefined() {
         DisplayData::display_previous_file(&mut display_data, dir_path, false, true);
     }
 
-    return predefined();
+    predefined()
 }
 
 #[cfg(test)]

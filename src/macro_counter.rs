@@ -131,11 +131,11 @@ impl MacroCounter {
             DisplayData::display_file(&mut display_data, None);
 
             match predefined {
-                true => return super::common::predefined::predefined(),
-                false => return crate::main(),
-            };
+                true => super::common::predefined::predefined(),
+                false => crate::main(),
+            }
         } else {
-            return self.collect_data(predefined);
+            self.collect_data(predefined);
         }
     }
 
@@ -180,9 +180,8 @@ impl MacroCounter {
 
             if operation.trim().contains("q") {
                 break;
-            } else {
-                return self.collect_data(predefined);
             }
+            return self.collect_data(predefined);
         }
     }
 

@@ -64,12 +64,12 @@ impl Pathing {
         };
 
         Pathing::create_file(&pathing);
-        return pathing;
+        pathing
     }
 }
 
 pub fn file_exists(path: &String) -> bool {
-    return path::Path::new(&path).exists();
+    path::Path::new(&path).exists()
 }
 
 pub fn user_path() -> String {
@@ -78,7 +78,7 @@ pub fn user_path() -> String {
         None => panic!("Error: unable to determine $HOME directory"),
     };
 
-    return dir_path.to_str().unwrap().to_string();
+    dir_path.to_str().unwrap().to_string()
 }
 
 #[cfg(test)]
@@ -101,7 +101,7 @@ mod unit_tests {
             dir_path,
         };
 
-        return test_pathing;
+        test_pathing
     }
 
     #[test]
