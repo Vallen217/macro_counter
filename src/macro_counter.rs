@@ -1,7 +1,8 @@
 pub mod input_data;
 pub mod write_file;
 
-use crate::common::display_data::DisplayData;
+use crate::common::{display_data::DisplayData, pathing::Pathing};
+use crate::instantiate_display_data;
 use regex::Regex;
 use std::{fs, io};
 
@@ -179,6 +180,10 @@ impl MacroCounter {
             self.write_file();
 
             if operation.trim().contains("q") {
+                let pathing = Pathing::generate_file_path();
+                let display_file_path =
+                    instantiate_display_data(pathing.file_path.clone(), pathing.dir_path.clone());
+                DisplayData::display_file(&display_file_path, None);
                 break;
             }
             return self.collect_data(predefined);
