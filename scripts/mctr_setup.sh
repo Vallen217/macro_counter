@@ -15,4 +15,5 @@ mkdir -p "$HOME/Documetns/Health/Predefined_Meals"
 
 # copy the launch script to bin
 # so that specifying the script path is no longer necessary when executing.
+chmod +x "$MCTR_DIR/scripts/mctr.sh"
 sudo cp "$MCTR_DIR/scripts/mctr.sh" "/usr/local/bin/"
