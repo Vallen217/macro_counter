@@ -38,9 +38,9 @@ impl Pathing {
 
         for (i, val) in full_path.split("-").enumerate() {
             match i {
-                // parent dir + year
+                // year
                 0 => {
-                    let tmp = format!("{}-", val);
+                    let tmp = format!("{}/", val);
                     dir_path.push_str(&tmp);
                 }
                 // month
