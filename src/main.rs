@@ -28,6 +28,9 @@ fn main() {
         \n\nOperation:"
     );
 
+    Date::current_date();
+    println!("{:#?}", display_data.file_path);
+
     loop {
         let mut operation = String::new();
         io::stdin().read_line(&mut operation).unwrap();
@@ -44,6 +47,7 @@ fn main() {
             return MacroCounter::get_operation(&mut macro_counter, false);
         }
 
+        // TODO: Allow for an operation of -1 to view the most recent non-current file.
         if operation.contains("dpf") {
             let parent_dir = format!("{}/Documents/Health/Macronutritional_Intake", user_dir);
             DisplayData::display_previous_file(&mut display_data, parent_dir, false, false);
@@ -66,6 +70,9 @@ fn main() {
             println!("\n\nOperation:");
         }
 
+        // TODO: Write a function to create a temporary dir and copy the last 'n' number of files into the dir.
+        // Then call display_monthly_data on that dir.
+
         if operation.contains("pd") {
             println!(
                 "\n\n(cf)  - Create new predefined meal\
@@ -78,8 +85,7 @@ fn main() {
 
         let re = Regex::new(r"m[0-9]+").unwrap();
         if re.is_match(&operation) {
-            // The 1st call to MacroCounter::compile_data() is to save data
-            // already in the file.
+            // The 1st call to MacroCounter::compile_data() is to save data already in the file.
             MacroCounter::compile_data(&mut macro_counter, true);
 
             let predefined_file = format!(

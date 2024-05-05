@@ -39,6 +39,11 @@ impl DisplayData {
                 process::exit(0);
             }
 
+            // to view the latest non-current file
+            // if dir.contains("-1") {
+            //     println!()
+            // }
+
             let dir_path = format!("{}/{}", parent_dir, &dir[0..dir.len() - 1]);
 
             if !pathing::file_exists(&dir_path) {

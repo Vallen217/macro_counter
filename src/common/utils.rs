@@ -1,4 +1,5 @@
 use crate::*;
+use chrono::Local;
 use std::fs;
 
 // used to synchronize the indentation levels in .txt files.
@@ -30,6 +31,40 @@ pub fn instantiate_display_data(file_path: String, dir_path: String) -> DisplayD
     };
 
     display_data
+}
+
+pub struct Date {
+    pub year: i16,
+    pub month: i16,
+    pub day: i16,
+}
+
+impl Date {
+    pub fn current_date() -> Date {
+        let chrono_date = format!("{}", Local::now().date_naive());
+        let mut date_segments = vec![];
+
+        for val in chrono_date.split("-") {
+            let val: i16 = match val.parse() {
+                Ok(data) => data,
+                Err(error) => {
+                    dbg!(error);
+                    panic!("Error: compiling current date '{}'", val);
+                }
+            };
+            date_segments.push(val);
+        }
+
+        let date = Date {
+            year: date_segments[0],
+            month: date_segments[1],
+            day: date_segments[2],
+        };
+
+        date
+    }
+
+    // TODO: Something, something, manual file path moduloe.
 }
 
 #[allow(dead_code)]
