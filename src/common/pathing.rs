@@ -1,12 +1,6 @@
-use chrono::Local;
+use super::utils;
 use dirs;
 use std::{fs, io, path, process};
-
-pub struct Date {
-    pub year: i16,
-    pub month: i16,
-    pub day: i16,
-}
 
 pub struct Pathing {
     pub year_path: String,
@@ -14,34 +8,8 @@ pub struct Pathing {
     pub day_path: String,
 }
 
-impl Date {
-    pub fn current_date() -> Date {
-        let chrono_date = format!("{}", Local::now().date_naive());
-        let mut date_segments = vec![];
-
-        for val in chrono_date.split("-") {
-            let val: i16 = match val.parse() {
-                Ok(data) => data,
-                Err(error) => {
-                    dbg!(error);
-                    panic!("Error: compiling current date '{}'", val);
-                }
-            };
-            date_segments.push(val);
-        }
-
-        let date = Date {
-            year: date_segments[0],
-            month: date_segments[1],
-            day: date_segments[2],
-        };
-
-        date
-    }
-}
-
 impl Pathing {
-    pub fn generate_file_path(date: Date) -> Pathing {
+    pub fn generate_file_path(date: &utils::Date, create_file: bool) -> Pathing {
         let user_dir = match dirs::home_dir() {
             Some(dir) => dir,
             None => panic!("Error: unable to determine $HOME directory"),
@@ -57,7 +25,9 @@ impl Pathing {
             day_path: format!("{parent_dir}/{}/{}/{}.txt", date.year, date.month, date.day),
         };
 
-        Pathing::create_file(&pathing);
+        if create_file {
+            Pathing::create_file(&pathing);
+        }
         pathing
     }
 

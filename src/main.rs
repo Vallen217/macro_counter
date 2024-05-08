@@ -2,7 +2,7 @@ mod common;
 pub mod macro_counter;
 
 use common::display_data::DisplayData;
-use common::pathing::{self, Date, Pathing};
+use common::pathing::{self, Pathing};
 use common::predefined;
 use common::utils::*;
 use macro_counter::MacroCounter;
@@ -10,11 +10,13 @@ use regex::Regex;
 use std::{io, process::exit};
 
 fn main() {
-    let pathing = Pathing::generate_file_path(Date::current_date());
+    let pathing = Pathing::generate_file_path(&Date::current_date(), true);
     let mut macro_counter = instantiate_macro_counter(pathing.day_path.clone());
     let mut display_data =
         instantiate_display_data(pathing.day_path.clone(), pathing.month_path.clone());
     let user_dir = pathing::user_path();
+
+    aggregate_recent_files(5);
 
     println!(
         "\n\n(mf)  - Modify file\
