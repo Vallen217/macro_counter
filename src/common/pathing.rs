@@ -117,7 +117,7 @@ pub fn user_input_pathing(parent_directory: String, date_type: &str) -> String {
     // unless it's declared outright like this. And I dont care enough to fix it right now.
     let mut formatted_path = format!("{}/{}", parent_directory, &path[0..path.len() - 1]);
 
-    if date_type.contains("day") {
+    if date_type.contains("day") || date_type.contains("pd file") {
         if path.contains(".txt") {
             formatted_path = format!("{}/{}", parent_directory, &path[0..path.len() - 1]);
         } else {

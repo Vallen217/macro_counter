@@ -32,6 +32,9 @@ pub fn instantiate_display_data(file_path: String, dir_path: String) -> DisplayD
     display_data
 }
 
+// TODO: Get current date, decrement 1 from 'day', ignore non-existent files,
+// set counter to 31 and subtract 1 from 'month' if 0 is reached.
+
 #[allow(dead_code)]
 pub fn user_test_path() -> String {
     let dir_path = match fs::canonicalize("..") {
