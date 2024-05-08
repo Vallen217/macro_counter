@@ -40,8 +40,9 @@ pub fn predefined() {
 
         let file_name = format!("m{}.txt", dir_len);
         let pathing = Pathing {
-            dir_path: dir_path.clone(),
-            file_path: format!("{}/{}", dir_path, file_name),
+            year_path: dir_path.clone(),
+            month_path: "".to_string(), // Was it not already a String? Rustup thinks not.
+            day_path: format!("{}/{}", dir_path, file_name),
         };
         Pathing::create_file(&pathing);
     }

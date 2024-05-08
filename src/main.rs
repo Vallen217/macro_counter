@@ -2,7 +2,7 @@ mod common;
 pub mod macro_counter;
 
 use common::display_data::DisplayData;
-use common::pathing::{self, Pathing};
+use common::pathing::{self, Date, Pathing};
 use common::predefined;
 use common::utils::*;
 use macro_counter::MacroCounter;
@@ -10,10 +10,10 @@ use regex::Regex;
 use std::{io, process::exit};
 
 fn main() {
-    let pathing = Pathing::generate_file_path();
-    let mut macro_counter = instantiate_macro_counter(pathing.file_path.clone());
+    let pathing = Pathing::generate_file_path(Date::current_date());
+    let mut macro_counter = instantiate_macro_counter(pathing.day_path.clone());
     let mut display_data =
-        instantiate_display_data(pathing.file_path.clone(), pathing.dir_path.clone());
+        instantiate_display_data(pathing.day_path.clone(), pathing.month_path.clone());
     let user_dir = pathing::user_path();
 
     println!(
@@ -27,9 +27,6 @@ fn main() {
         \n(q)   - Quit the program\
         \n\nOperation:"
     );
-
-    Date::current_date();
-    println!("{:#?}", display_data.file_path);
 
     loop {
         let mut operation = String::new();
@@ -101,7 +98,7 @@ fn main() {
             MacroCounter::compile_data(&mut macro_counter, false);
 
             macro_counter.file_path.clear();
-            macro_counter.file_path.push_str(&pathing.file_path.clone());
+            macro_counter.file_path.push_str(&pathing.day_path.clone());
             MacroCounter::write_file(&mut macro_counter);
 
             DisplayData::display_file(&mut display_data, None);
