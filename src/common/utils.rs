@@ -33,7 +33,6 @@ impl Date {
         date
     }
 
-    // NOTE: void_files are initially passed as 0.
     pub fn decrement_date(&mut self, mut void_files: i8) -> &mut Self {
         if self.day != 1 {
             self.day -= 1;

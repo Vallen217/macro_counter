@@ -18,7 +18,7 @@ fn main() {
 
     println!(
         "\n\n(mf)  - Modify file\
-        \n(dr)  - Display the most recent non-current file\
+        \n(dr)  - Display the most recent, non-current file\
         \n(dpf) - Display previous files\
         \n(dpm) - Display previous month's aggregated data\
         \n(dp#) - Display aggregated data from the previous # files\
@@ -54,7 +54,6 @@ fn main() {
             DisplayData::display_file(&display_data, None);
         }
 
-        // TODO: Allow for an operation of -1 to view the most recent non-current file.
         if operation.contains("dpf") {
             let parent_dir = format!("{}/Documents/Health/Macronutritional_Intake", user_dir);
             DisplayData::display_previous_file(&mut display_data, parent_dir, false, false);
