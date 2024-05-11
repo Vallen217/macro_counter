@@ -28,16 +28,16 @@ pub fn predefined() {
         }
     };
 
-    let mut dir_len = 1;
-    for _ in directory {
-        dir_len += 1;
-    }
-
     if operation.contains("q") {
         return crate::main();
     }
 
     if operation.contains("cf") {
+        let mut dir_len = 1;
+        for _ in directory {
+            dir_len += 1;
+        }
+
         let file_name = format!("m{}.txt", dir_len);
         let pathing = Pathing {
             year_path: dir_path.clone(),
@@ -65,7 +65,7 @@ pub fn predefined() {
         match io::stdin().read_line(&mut file_name) {
             Ok(file_name) => file_name,
             Err(_) => {
-                println!("Error: unable to read '{}'", file_name);
+                println!("Error: unable to read: '{}'", file_name);
                 return predefined();
             }
         };
@@ -107,12 +107,11 @@ pub fn predefined() {
     }
 
     if operation.contains("rf") {
-        let file_name = format!("{}/m{}.txt", dir_path.clone(), dir_len - 1);
-
-        match std::fs::remove_file(&file_name) {
+        let file = pathing::user_input_pathing(dir_path.clone(), "day");
+        match std::fs::remove_file(file.clone()) {
             Ok(ok) => ok,
             Err(err) => {
-                println!("Error: removing: '{}'", file_name);
+                println!("Error: removing: '{}'", file);
                 dbg!(err);
                 return self::predefined();
             }
