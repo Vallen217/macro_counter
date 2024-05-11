@@ -23,7 +23,7 @@ pub fn predefined() {
     match io::stdin().read_line(&mut operation) {
         Ok(oper) => oper,
         Err(_) => {
-            println!("Error: unable to read operation '{}'", operation);
+            println!("Error: unable to read operation: '{}'", operation);
             return predefined();
         }
     };
@@ -112,7 +112,7 @@ pub fn predefined() {
         match std::fs::remove_file(&file_name) {
             Ok(ok) => ok,
             Err(err) => {
-                println!("Error: removing '{}'", file_name);
+                println!("Error: removing: '{}'", file_name);
                 dbg!(err);
                 return self::predefined();
             }

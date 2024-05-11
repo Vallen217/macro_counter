@@ -33,8 +33,8 @@ impl Date {
         date
     }
 
-    // NOTE: void_files should initially be passed as 0.
-    fn decrement_date(&mut self, mut void_files: i8) -> &mut Self {
+    // NOTE: void_files are initially passed as 0.
+    pub fn decrement_date(&mut self, mut void_files: i8) -> &mut Self {
         if self.day != 1 {
             self.day -= 1;
         } else {
@@ -51,9 +51,9 @@ impl Date {
         let current_path = pathing::Pathing::generate_file_path(&self, false);
         // If a number greater than the total number of files (dates) is passed,
         // the loop will result in a stack overflow.
-        if void_files > 50 {
+        if void_files > 100 {
             println!(
-                "Error: {} excceds the number of files available",
+                "Error: '{}' excceds the number of files available",
                 void_files
             );
             crate::main()
@@ -82,7 +82,7 @@ pub fn aggregate_recent_files(mut count: i16) {
         Ok(_) => (),
         Err(err) => {
             dbg!(err);
-            panic!("Error: creating '{}'", temp_dir);
+            panic!("Error: creating: '{}'", temp_dir);
         }
     };
 

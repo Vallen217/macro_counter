@@ -18,6 +18,7 @@ fn main() {
 
     println!(
         "\n\n(mf)  - Modify file\
+        \n(dr)  - Display the most recent non-current file\
         \n(dpf) - Display previous files\
         \n(dpm) - Display previous month's aggregated data\
         \n(dp#) - Display aggregated data from the previous # files\
@@ -43,6 +44,14 @@ fn main() {
             );
 
             return MacroCounter::get_operation(&mut macro_counter, false);
+        }
+        if operation.contains("dr") {
+            let parent_dir = format!("{}/Documents/Health/Macronutritional_Intake", user_dir);
+            let mut current_date = Date::current_date();
+            let latest_date = Date::decrement_date(&mut current_date, 0);
+            let latest_file = Pathing::generate_file_path(latest_date, false);
+            let display_data = instantiate_display_data(latest_file.day_path, parent_dir);
+            DisplayData::display_file(&display_data, None);
         }
 
         // TODO: Allow for an operation of -1 to view the most recent non-current file.
@@ -90,7 +99,6 @@ fn main() {
             DisplayData::display_dir_data(&mut display_recent, true);
         }
 
-        // TODO: Make a function to delete pd files.
         if operation.contains("pd") {
             println!(
                 "\n\n(cf)  - Create a new predefined meal file\
