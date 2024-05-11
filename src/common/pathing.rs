@@ -95,7 +95,7 @@ pub fn user_input_pathing(parent_directory: String, date_type: &str) -> String {
         }
     }
 
-    // for user to quit early
+    // for user to quit prematurely
     if formatted_path.contains("q") {
         process::exit(0);
     }

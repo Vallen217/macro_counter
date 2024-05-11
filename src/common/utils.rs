@@ -33,7 +33,8 @@ impl Date {
         date
     }
 
-    fn decrement_date(&mut self) -> String {
+    // void_files should initially be passed as 0.
+    fn decrement_date(&mut self, mut void_files: i8) -> &mut Self {
         if self.day != 1 {
             self.day -= 1;
         } else {
@@ -48,40 +49,58 @@ impl Date {
         }
 
         let current_path = pathing::Pathing::generate_file_path(&self, false);
-        format!("{}", current_path.day_path)
+        // If a number greater than the total number of files (dates) is passed,
+        // the loop will result in a stack overflow.
+        if void_files > 50 {
+            println!(
+                "Error: {} excceds the number of files available",
+                void_files
+            );
+            crate::main()
+        }
+
+        if !pathing::file_exists(&current_path.day_path) {
+            void_files += 1;
+            return self.decrement_date(void_files);
+        }
+        self
     }
 }
 
-// TODO: Create a temp dir, cp files into it,
-// call display_monthly_data on temp dir if the number of files > 1 else call display_file,
-// delete temp dir.
+// Creates a temporary directory and copies 'n' files into it to display.
 pub fn aggregate_recent_files(mut count: i16) {
-    let mut initial_iter = true;
+    let user_dir = match dirs::home_dir() {
+        Some(dir) => dir,
+        None => panic!("Error: unable to determine $HOME directory"),
+    };
+    let temp_dir = format!(
+        "{}/Documents/Health/Macronutritional_Intake/mctr_temp",
+        user_dir.to_str().unwrap()
+    );
+
+    match fs::create_dir_all(&temp_dir) {
+        Ok(_) => (),
+        Err(err) => {
+            dbg!(err);
+            panic!("Error: creating '{}'", temp_dir);
+        }
+    };
+
     let mut initial_date = Date::current_date();
 
-    // If a number greater than the total number of files (dates) is passed,
-    // the loop won't end.
-    let mut void_files: i8 = 0;
-
     while count > 0 {
-        let file: String = if initial_iter {
-            let current_path = pathing::Pathing::generate_file_path(&initial_date, false);
-            format!("{}", current_path.day_path)
-        } else {
-            Date::decrement_date(&mut initial_date)
+        let temp_date = Date::decrement_date(&mut initial_date, 0);
+        let temp_file = format!("{}/{}.txt", temp_dir, temp_date.day);
+        let real_pathing = Pathing::generate_file_path(temp_date, false);
+        let temp_pathing = Pathing {
+            year_path: String::new(),
+            month_path: temp_dir.clone(),
+            day_path: temp_file,
         };
-        initial_iter = false;
 
-        if pathing::file_exists(&file) {
-            dbg!("{:?}", &file);
-            count -= 1;
-        } else {
-            void_files += 1;
-            if void_files > 5 {
-                println!("Error: the number received excceds the number of files available");
-                break;
-            }
-        }
+        Pathing::create_file(&temp_pathing);
+        let _ = fs::copy(real_pathing.day_path, temp_pathing.day_path);
+        count -= 1
     }
 }
 

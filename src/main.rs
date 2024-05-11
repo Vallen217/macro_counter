@@ -16,16 +16,15 @@ fn main() {
         instantiate_display_data(pathing.day_path.clone(), pathing.month_path.clone());
     let user_dir = pathing::user_path();
 
-    aggregate_recent_files(5);
-
     println!(
         "\n\n(mf)  - Modify file\
         \n(dpf) - Display previous files\
-        \n(dpm) - Display previous monthly data\
-        \n(df)  - Display file\
-        \n(dm)  - Display monthly data\
+        \n(dpm) - Display previous month's aggregated data\
+        \n(dp#) - Display aggregated data from the previous # files\
+        \n(df)  - Display the current file\
+        \n(dm)  - Display the current month's aggregated data\
         \n(pd)  - Predefined meals\
-        \n(m#)  - Append predefined meal m#\
+        \n(m#)  - Append predefined meal # to the current file\
         \n(q)   - Quit the program\
         \n\nOperation:"
     );
@@ -36,9 +35,9 @@ fn main() {
 
         if operation.contains("mf") {
             println!(
-                "\n\n(rl#)  - Removes the last n file entry lines\
-                \n(rlq#) - Removes the last n file entry lines and quit\
-                \n(.)    - Repeat the last data entry line\
+                "\n\n(rl#)  - Remove the last # file entry\
+                \n(rlq#) - Remove the last # file entry and quit\
+                \n(.)    - Repeat the last file entry\
                 \n(q)    - Quit the loop\
                 \nPress any key to continue"
             );
@@ -65,25 +64,45 @@ fn main() {
         }
 
         if operation.contains("dm") {
-            DisplayData::display_monthly_data(&mut display_data);
+            DisplayData::display_dir_data(&mut display_data, false);
             println!("\n\nOperation:");
         }
 
-        // TODO: Write a function to create a temporary dir and copy the last 'n' number of files into the dir.
-        // Then call display_monthly_data on that dir.
+        let re_p = Regex::new(r"dp[0-9]+").unwrap();
+        if re_p.is_match(&operation) {
+            let rf_count = &operation.trim()[2..];
+            let rf_count: i16 = match rf_count.parse() {
+                Ok(count) => count,
+                Err(err) => {
+                    println!("Error: parsing operation: '{}'.", operation);
+                    dbg!(err);
+                    return main();
+                }
+            };
 
+            aggregate_recent_files(rf_count);
+            let temp_dir = format!(
+                "{}/Documents/Health/Macronutritional_Intake/mctr_temp",
+                user_dir
+            );
+
+            let mut display_recent = instantiate_display_data(String::new(), temp_dir.clone());
+            DisplayData::display_dir_data(&mut display_recent, true);
+        }
+
+        // TODO: Make a function to delete pd files.
         if operation.contains("pd") {
             println!(
-                "\n\n(cf)  - Create new predefined meal\
-                \n(mf)  - Modify predefined meal\
-                \n(df)  - Display predefined meals\
+                "\n\n(cf)  - Create a new predefined meal file\
+                \n(mf)  - Modify predefined meal files\
+                \n(df)  - Display predefined meal files\
                 \n(q)   - Quit the loop"
             );
             return predefined::predefined();
         }
 
-        let re = Regex::new(r"m[0-9]+").unwrap();
-        if re.is_match(&operation) {
+        let re_m = Regex::new(r"m[0-9]+").unwrap();
+        if re_m.is_match(&operation) {
             // The 1st call to MacroCounter::compile_data() is to save data already in the file.
             MacroCounter::compile_data(&mut macro_counter, true);
 

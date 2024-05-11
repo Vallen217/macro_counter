@@ -3,8 +3,8 @@ use crate::common::utils::pad_word;
 use std::fs;
 
 impl DisplayData {
-    fn compile_monthly_data(&mut self) -> (Vec<String>, Vec<String>) {
-        // if DisplayData::compile_monthly_data() is called repeatedly within
+    fn compile_dir_data(&mut self) -> (Vec<String>, Vec<String>) {
+        // if DisplayData::compile_dir_data() is called repeatedly within
         // a single program runtime, these fields will continually aggregate.
         self.macro_totals.clear();
         self.totals.clear();
@@ -46,12 +46,12 @@ impl DisplayData {
                 if val.contains("g") {
                     val = &val[0..val.len() - 1];
                 }
-                // delete the file to prevent scewed monthly data
+                // delete the file to prevent scewed dir data
                 // if it exists but contains no real data.
                 if val == 0.to_string() {
                     match fs::remove_file(file.as_ref().unwrap().path()) {
                         Ok(_) => {
-                            return self.compile_monthly_data();
+                            return self.compile_dir_data();
                         }
                         Err(error) => {
                             dbg!(error);
@@ -62,12 +62,12 @@ impl DisplayData {
             }
         }
 
-        self.parse_monthly_data()
+        self.parse_dir_data()
     }
 
     // parses data gathered from DisplayData::compile_data()
     // into pieces of data we want to disply and returns them as Strings.
-    fn parse_monthly_data(&mut self) -> (Vec<String>, Vec<String>) {
+    fn parse_dir_data(&mut self) -> (Vec<String>, Vec<String>) {
         let dir = match fs::read_dir(&self.dir_path) {
             Ok(dir) => dir,
             Err(err) => {
@@ -75,31 +75,31 @@ impl DisplayData {
                 panic!("Error: unable to read '{}'", self.dir_path);
             }
         };
-        // get the number of files in the dir to calculate various monthly means.
+        // get the number of files in the dir to calculate various dir means.
         let mut dir_len: f32 = 0.0;
         for _ in dir {
             dir_len += 1.0;
         }
 
-        let mut monthly_means: Vec<String> = Vec::new();
+        let mut dir_means: Vec<String> = Vec::new();
         for i in 0..4 {
             self.totals.push(self.macro_totals[i].iter().sum::<f32>());
             let mean = format!("{:.1}", self.totals[i] / dir_len);
-            monthly_means.push(mean);
+            dir_means.push(mean);
         }
 
-        let mut monthly_rel_percent: Vec<String> = Vec::new();
+        let mut dir_rel_percent: Vec<String> = Vec::new();
         for i in 1..4 {
-            monthly_rel_percent.push(format!(
+            dir_rel_percent.push(format!(
                 "{:.1}%",
                 (100.0 / self.totals[1..].iter().sum::<f32>()) * self.totals[i]
             ));
         }
 
-        (monthly_means, monthly_rel_percent)
+        (dir_means, dir_rel_percent)
     }
 
-    pub fn display_monthly_data(&mut self) {
+    pub fn display_dir_data(&mut self, temp_dir: bool) {
         println!(
             "\n\nCal:{}Fat:{}Carb:{}Protein:{}",
             pad_word("Cal:"),
@@ -108,12 +108,12 @@ impl DisplayData {
             pad_word("Protein:")
         );
 
-        let parsed_data = self.compile_monthly_data();
-        let monthly_means: Vec<String> = parsed_data.0;
-        let monthly_rel_percent: Vec<String> = parsed_data.1;
+        let parsed_data = self.compile_dir_data();
+        let dir_means: Vec<String> = parsed_data.0;
+        let dir_rel_percent: Vec<String> = parsed_data.1;
 
         print!(
-            "\nContemporary monthly total amounts:\n{}{}",
+            "\nContemporary directory total amounts:\n{}{}",
             self.totals[0],
             pad_word(&self.totals[0].to_string())
         );
@@ -124,19 +124,31 @@ impl DisplayData {
 
         print!(
             "\n\nMean daily amounts:\n{}{}",
-            monthly_means[0],
-            pad_word(&monthly_means[0].to_string())
+            dir_means[0],
+            pad_word(&dir_means[0].to_string())
         );
-        for val in monthly_means[1..].iter() {
+        for val in dir_means[1..].iter() {
             let means_val = format!("{}g", val);
             print!("{}{}", means_val, pad_word(&means_val));
         }
 
         print!("\n\nMean daily relative percentages:\n");
         print!("{}", pad_word(""));
-        for val in monthly_rel_percent.iter() {
+        for val in dir_rel_percent.iter() {
             print!("{}{}", val, pad_word(&val));
         }
+
+        if temp_dir {
+            match std::fs::remove_dir_all(&self.dir_path) {
+                Ok(ok) => ok,
+                Err(err) => {
+                    println!("Error removing temporary directory: {}", temp_dir);
+                    dbg!(err);
+                }
+            };
+        }
+
+        crate::main();
     }
 }
 
@@ -160,7 +172,7 @@ pub mod unit_tests {
     #[test]
     fn check_display_macro_totals() {
         let mut test_data = instantiate_display_data();
-        DisplayData::compile_monthly_data(&mut test_data);
+        DisplayData::compile_dir_data(&mut test_data);
 
         let mut expected_value: Vec<f32> = Vec::new();
         expected_value.push(2555.0);
@@ -172,9 +184,9 @@ pub mod unit_tests {
     }
 
     #[test]
-    fn check_monthly_means() {
+    fn check_dir_means() {
         let mut test_data = instantiate_display_data();
-        let resultant_values = DisplayData::compile_monthly_data(&mut test_data);
+        let resultant_values = DisplayData::compile_dir_data(&mut test_data);
 
         let mut expected_value: Vec<String> = Vec::new();
         expected_value.push("851.7".to_string());
@@ -186,9 +198,9 @@ pub mod unit_tests {
     }
 
     #[test]
-    fn check_monthly_rel_percent() {
+    fn check_dir_rel_percent() {
         let mut test_data = instantiate_display_data();
-        let resultant_values = DisplayData::compile_monthly_data(&mut test_data);
+        let resultant_values = DisplayData::compile_dir_data(&mut test_data);
 
         let mut expected_value: Vec<String> = Vec::new();
         expected_value.push("11.1%".to_string());

@@ -1,4 +1,4 @@
-pub mod display_monthly_data;
+pub mod display_dir_data;
 pub mod display_previous_data;
 
 use std::fs;
