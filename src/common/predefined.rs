@@ -28,16 +28,16 @@ pub fn predefined() {
         }
     };
 
+    let mut dir_len = 1;
+    for _ in directory {
+        dir_len += 1;
+    }
+
     if operation.contains("q") {
         return crate::main();
     }
 
     if operation.contains("cf") {
-        let mut dir_len = 1;
-        for _ in directory {
-            dir_len += 1;
-        }
-
         let file_name = format!("m{}.txt", dir_len);
         let pathing = Pathing {
             year_path: dir_path.clone(),
@@ -107,11 +107,12 @@ pub fn predefined() {
     }
 
     if operation.contains("rf") {
-        let file = pathing::user_input_pathing(dir_path.clone(), "day");
-        match std::fs::remove_file(file.clone()) {
+        let file_path = format!("{}/m{}.txt", dir_path, dir_len - 1);
+
+        match std::fs::remove_file(file_path.clone()) {
             Ok(ok) => ok,
             Err(err) => {
-                println!("Error: removing: '{}'", file);
+                println!("Error: removing: '{}'", file_path);
                 dbg!(err);
                 return self::predefined();
             }
@@ -120,7 +121,6 @@ pub fn predefined() {
 
     predefined()
 }
-
 #[cfg(test)]
 mod integration_test {
     use super::*;
