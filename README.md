@@ -13,17 +13,8 @@ i.e. calories, fat, carbohydrates, and protein.
 
 ## Usage
 
-Run `mctr.sh` in a terminal:
+![menu](https://github.com/Vallen217/macro_counter/assets/94763660/f1c6e518-c2f3-4f16-b72b-c892b7787a66)
 
-    (mf)  - Modify file
-    (dpf) - Display previous files
-    (dpm) - Display previous monthly data
-    (df)  - Display file
-    (dm)  - Display monthly data
-    (pd)  - Predefined meals
-    (m#)  - Append predefined meal m#
-    (q)   - Quit the program
-    Operation:
 
 macro_counter creates directries & file based on the current date (e.g. `2023/09/27.txt`)
 in the directory `$HOME/Documents/Health/Macronutritional_Intake`.
@@ -33,180 +24,58 @@ Which are used as the basis to track & record macro data.
 
 ### (mf) - Modify file
 
-Add/remove data to/from a file.
-
-    Operation:
-    mf
-
-    (rl#)  - Remove the last 'n' file entry lines
-    (rlq#) - Remove the last 'n' file entry lines and quit
-    (.)    - Repeat the last data entry line
-    (q)    - Quit the 'mf' loop
-    (Press any key to continue)
+![mf](https://github.com/Vallen217/macro_counter/assets/94763660/514c9d74-7ca5-4670-9b1f-7a6b230da084)
 
 
-    Caloire:
-    200
+### (dr) - Display the most recent, non-current file
 
-    Fat:
-    5
+![dr](https://github.com/Vallen217/macro_counter/assets/94763660/5bec74e0-2a75-4cbe-b8ca-9d0feb8725a2)
 
-    Carb:
-    24
-
-    Protein:
-    16
-
-    (Press enter to continue)
-    Operation:
-    q
-
-    Cal:        Fat:        Carb:       Protein:
-    200         5g           24g          16g
-
-    Total Amounts & Relative Percentages:
-    200         5g          24g         16g
-                11.1%       53.3%       35.6%
-
-### (df) - Display file
-
-Displays data recorded in a file.
-
-    Operation:
-    df
-
-    Cal:        Fat:        Carb:       Protein:
-    200         5g           24g          16g
-
-    Total Amounts & Relative Percentages:
-    200         5g          24g         16g
-                11.1%       53.3%       35.6%
-
-### (dm) - Display monthl data
-
-Display aggregated data from every file in the monthly directory.
-Note: in this example only 4 files are present in the monthly directory.
-
-    Operation:
-    dm
-
-
-    Cal:        Fat:        Carb:       Protein:
-
-    Contemporary monthly total amounts:
-    2960        90g         439g        229g
-
-    Mean daily amounts:
-    740.0       22.5g       109.8       57.2g
-
-    Mean daily relative percentages:
-                11.9%       57.9%       30.2%
 
 ### (dpf) - Display previous files
 
-    Operation:
-    dpf
-
-    Enter a relative path from:
-    $HOME/Documents/Health/Macronutritional_Intake/2023-09
-    2023-09
-
-    $HOME/Documents/Health/Macronutritional_Intake/2023-09/24.txt
-    $HOME/Documents/Health/Macronutritional_Intake/2023-09/25.txt
-    $HOME/Documents/Health/Macronutritional_Intake/2023-09/26.txt
-    $HOME/Documents/Health/Macronutritional_Intake/2023-09/27.txt
-    25
-
-    Cal:        Fat:        Carb:       Protein:
-    200         5g           24g          16g
-    280         2g           55g          10g
-
-    Total Amounts & Relative Percentages:
-    480         7g          79g         26g
-                6.2%        70.5%       23.2%
-
-### (dpm) - Display previous monthly data
-
-    Operation:
-    dpm
-
-    Enter a relative path from:
-    $HOME/Documents/Health/Macronutritional_Intake/2023-09
-    2023-09
+![dpf](https://github.com/Vallen217/macro_counter/assets/94763660/486fcdc1-88c8-4fcc-bf6a-c1ee3e862f04)
 
 
-    Cal:        Fat:        Carb:       Protein:
+### (dpm) - Display previous month's aggregated data
 
-    Contemporary monthly total amounts:
-    2960        90g         439g        229g
-
-    Mean daily amounts:
-    740.0       22.5g       109.8       57.2g
-
-    Mean daily relative percentages:
-                11.9%       57.9%       30.2%
-
-### (pd) - Predefined meals
-
-If you find yourself frequently entering in an identical set of macro data e.g.
-for breakfast you frequently have 2 granola bars & 2 bagel,
-instead of enter data from each item separateley each day you could use predefined meals.
-
-Which creates a new file named `m#` (where # is the existing number of predefined meals)
-and add the data you'd usually add to the daily files in `$HOME/Documents/Health/Macronutritional_Intake`
-which can then be called with `m1` when running the `mf` operation,
-to append whatever's in predefined meal file to the current daily file.
-
-Access point for creating/modifying predefined files
-All operations available are the same as the aforementions.
-
-    Operaton:
-    pd
+![dpm](https://github.com/Vallen217/macro_counter/assets/94763660/f45365c7-e211-49cf-819f-8857103c2618)
 
 
-    (cf)  - Create new predefined meal
-    (mf)  - Modify predefined meal
-    (df)  - Dispaly predefined meals
-    (q)   - Quit the 'pd' loop
+### (dp#) - Display aggregated data from the previous # files
 
-    Operation:
-    df
+![dp#](https://github.com/Vallen217/macro_counter/assets/94763660/0e7226e6-8131-4399-b18c-e5a4a86ed74e)
 
-    $HOME/Documents/Health/Predefined_Meals/m1.txt
-    m1
 
-    Cal:        Fat:        Carb:       Protein:
-    180         6g          21g         12g
-    180         6g          21g         12g
-    280         2g          55g         10g
-    280         2g          55g         10g
+### (df) - Display the current file
 
-    Total Amounts & Relative Percentages:
-    920         16g         21g         12g
-                7.5%        71.7%       20.8%
+![df](https://github.com/Vallen217/macro_counter/assets/94763660/b450a65f-69a5-4dc3-b53d-90322af948f6)
 
-### (m#) - Append predefined meal m#
+    
+### (dm) - Display the current month's aggregated data
 
-    Operation:
-    m1
+![dm](https://github.com/Vallen217/macro_counter/assets/94763660/d8625776-9970-47f8-8ef7-15e47a486827)
 
-    Cal:        Fat:        Carb:       Protein:
-    200         5g          24g         16g
-    180         6g          21g         12g
-    180         6g          21g         12g
-    280         2g          55g         10g
-    280         2g          55g         10g
 
-    Total Amounts & Relative Percentages:
-    1120        21g         176g        60g
-                8.2%        68.5%       23.3%
+## (pd) - Predefined meals
 
-### (q) - Quit the program
+![pd_menu](https://github.com/Vallen217/macro_counter/assets/94763660/93ff6d51-168c-4ac1-9cdc-f7f991d0e4d2)
 
-self explanitory.
 
-    Operation:
-    q
+### (cf) - create a new predefined meal file & (mf) - Modify predefined meal files
+
+![pd_cf_mf](https://github.com/Vallen217/macro_counter/assets/94763660/69ee1999-fd77-4b64-846c-d2fef959c63f)
+
+
+### (rf) - Remove the latest predefined file
+
+![pd_rf](https://github.com/Vallen217/macro_counter/assets/94763660/3bdb99cd-7b85-4ee0-8051-769d850300db)
+
+
+### (m#) - Append predefined meal m# to the current file
+
+![m#](https://github.com/Vallen217/macro_counter/assets/94763660/e62a32b6-14cf-4fc8-a2d6-87a4ed0254d0)
+
 
 ## Prerequisites
 
