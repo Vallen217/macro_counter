@@ -28,16 +28,16 @@ pub fn predefined() {
         }
     };
 
+    let mut dir_len = 1;
+    for _ in directory {
+        dir_len += 1;
+    }
+
     if operation.contains("q") {
         return crate::main();
     }
 
     if operation.contains("cf") {
-        let mut dir_len = 1;
-        for _ in directory {
-            dir_len += 1;
-        }
-
         let file_name = format!("m{}.txt", dir_len);
         let pathing = Pathing {
             year_path: dir_path.clone(),
@@ -103,7 +103,20 @@ pub fn predefined() {
 
     if operation.contains("df") {
         let mut display_data = instantiate_display_data(String::new(), dir_path.clone());
-        DisplayData::display_previous_file(&mut display_data, dir_path, false, true);
+        DisplayData::display_previous_file(&mut display_data, dir_path.clone(), false, true);
+    }
+
+    if operation.contains("rf") {
+        let file_name = format!("{}/m{}.txt", dir_path.clone(), dir_len - 1);
+
+        match std::fs::remove_file(&file_name) {
+            Ok(ok) => ok,
+            Err(err) => {
+                println!("Error: removing '{}'", file_name);
+                dbg!(err);
+                return self::predefined();
+            }
+        }
     }
 
     predefined()

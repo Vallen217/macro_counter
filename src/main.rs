@@ -96,6 +96,7 @@ fn main() {
                 "\n\n(cf)  - Create a new predefined meal file\
                 \n(mf)  - Modify predefined meal files\
                 \n(df)  - Display predefined meal files\
+                \n(rf)  - Remove the latest predefined file\
                 \n(q)   - Quit the loop"
             );
             return predefined::predefined();

@@ -33,7 +33,7 @@ impl Date {
         date
     }
 
-    // void_files should initially be passed as 0.
+    // NOTE: void_files should initially be passed as 0.
     fn decrement_date(&mut self, mut void_files: i8) -> &mut Self {
         if self.day != 1 {
             self.day -= 1;
@@ -67,7 +67,7 @@ impl Date {
     }
 }
 
-// Creates a temporary directory and copies 'n' files into it to display.
+// Creates a temporary directory and copies 'n' files into it for display.
 pub fn aggregate_recent_files(mut count: i16) {
     let user_dir = match dirs::home_dir() {
         Some(dir) => dir,
