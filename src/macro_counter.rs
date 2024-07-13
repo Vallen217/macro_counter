@@ -184,6 +184,12 @@ impl MacroCounter {
                 let display_file_path =
                     instantiate_display_data(pathing.day_path.clone(), pathing.month_path.clone());
                 DisplayData::display_file(&display_file_path, None);
+
+                // remove empty files
+                if self.calorie.len() == 0 {
+                    let _ = fs::remove_file(&self.file_path).unwrap();
+                }
+
                 break;
             }
             return self.collect_data(predefined);

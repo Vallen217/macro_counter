@@ -87,7 +87,6 @@ impl DisplayData {
             let mean = format!("{:.1}", self.totals[i] / dir_len);
             dir_means.push(mean);
         }
-
         let mut dir_rel_percent: Vec<String> = Vec::new();
         for i in 1..4 {
             dir_rel_percent.push(format!(
