@@ -3,6 +3,7 @@ use dirs;
 use std::{fs, io, path, process};
 
 pub struct Pathing {
+    #[allow(dead_code)]
     pub year_path: String,
     pub month_path: String,
     pub day_path: String,
