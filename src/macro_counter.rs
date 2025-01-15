@@ -1,7 +1,7 @@
 pub mod input_data;
 pub mod write_file;
 
-use crate::common::{display_data::DisplayData, pathing::Pathing, utils::Date};
+use crate::common::{display_data::DisplayData, pathing::Pathing, utils};
 use crate::instantiate_display_data;
 use regex::Regex;
 use std::{fs, io};
@@ -50,7 +50,7 @@ impl MacroCounter {
             let re = Regex::new(r"\d+\.?\d?g?").unwrap();
             if re.is_match(&line) {
                 for (iter, mut datum) in line.split_whitespace().enumerate() {
-                    // remove the 'gram' annotaion from file lines.
+                    // remove the 'gram' annotation from file lines.
                     if datum.contains('g') {
                         datum = &datum[0..datum.len() - 1];
                     }
@@ -129,6 +129,7 @@ impl MacroCounter {
                 macro_totals: vec![],
                 totals: Vec::new(),
             };
+
             DisplayData::display_file(&mut display_data, None);
 
             match predefined {
@@ -180,14 +181,15 @@ impl MacroCounter {
             self.write_file();
 
             if operation.trim().contains("q") {
-                let pathing = Pathing::generate_file_path(&Date::current_date(), true);
+                let pathing = Pathing::generate_file_path(&utils::Date::current_date(), true);
                 let display_file_path =
                     instantiate_display_data(pathing.day_path.clone(), pathing.month_path.clone());
-                DisplayData::display_file(&display_file_path, None);
 
-                // remove empty files
-                if self.calorie.len() == 0 {
+                // delete the file if it has no relevant data.
+                if self.calorie.is_empty() {
                     let _ = fs::remove_file(&self.file_path).unwrap();
+                } else {
+                    DisplayData::display_file(&display_file_path, None);
                 }
 
                 break;
