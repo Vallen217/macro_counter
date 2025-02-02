@@ -188,6 +188,7 @@ impl MacroCounter {
                 // delete the file if it has no relevant data.
                 if self.calorie.is_empty() {
                     let _ = fs::remove_file(&self.file_path).unwrap();
+                    break;
                 } else {
                     DisplayData::display_file(&display_file_path, None);
                 }
