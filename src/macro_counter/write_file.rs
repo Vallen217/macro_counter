@@ -14,7 +14,7 @@ impl MacroCounter {
         let mut rel_percentage: Vec<String> = Vec::new();
         for i in 1..4 {
             let percent_1 = format!("{:.1}%", ratio * self.totals[i]);
-            let percent_2 = format!("{}{}", percent_1, pad_word(&percent_1));
+            let percent_2 = format!("{}{}", percent_1, pad_word(&percent_1, 12));
             rel_percentage.push(percent_2.clone());
         }
 
@@ -26,19 +26,19 @@ impl MacroCounter {
             0 => {
                 let string_pad = self.calorie[i].clone().to_string();
                 let temp_macro_string: String =
-                    format!("{}{}", self.calorie[i], pad_word(&string_pad));
+                    format!("{}{}", self.calorie[i], pad_word(&string_pad, 12));
                 temp_macro_string
             }
             1 => {
                 let string_pad = self.fat[i].clone().to_string();
                 let temp_macro_string: String =
-                    format!("{}g{}", self.fat[i], pad_word(&string_pad));
+                    format!("{}g{}", self.fat[i], pad_word(&string_pad, 11));
                 temp_macro_string
             }
             2 => {
                 let string_pad = self.carb[i].clone().to_string();
                 let temp_macro_string: String =
-                    format!("{}g{}", self.carb[i], pad_word(&string_pad));
+                    format!("{}g{}", self.carb[i], pad_word(&string_pad, 11));
                 temp_macro_string
             }
             3 => {
@@ -57,10 +57,10 @@ impl MacroCounter {
     pub fn write_file(&mut self) {
         let top_file_line = format!(
             "Cal:{}Fat:{}Carb:{}Protein:{}",
-            pad_word("Cal:"),
-            pad_word("Fat:"),
-            pad_word("Carb:"),
-            pad_word("Protein:")
+            pad_word("Cal:", 12),
+            pad_word("Fat:", 12),
+            pad_word("Carb:", 12),
+            pad_word("Protein:", 12)
         );
         fs::write(&self.file_path, top_file_line).expect("Error: unable to write to file.");
 
@@ -104,11 +104,11 @@ impl MacroCounter {
             "\n\nTotal Amounts & Relative Percentages:\
             \n{}{}{}{}{}{}{}\n{}{}{}{}",
             total_calorie,
-            pad_word(&total_calorie),
+            pad_word(&total_calorie, 12),
             total_fat,
-            pad_word(&total_fat),
+            pad_word(&total_fat, 12),
             total_carb,
-            pad_word(&total_carb),
+            pad_word(&total_carb, 12),
             total_protein,
             " ".repeat(12),
             rel_percentage[0],

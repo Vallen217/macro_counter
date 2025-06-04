@@ -9,6 +9,8 @@ use macro_counter::MacroCounter;
 use regex::Regex;
 use std::{io, process::exit};
 
+// TODO: swith rel_per from gram to calorie
+
 fn main() {
     let pathing = Pathing::generate_file_path(&Date::current_date(), true);
     let mut macro_counter = instantiate_macro_counter(pathing.day_path.clone());

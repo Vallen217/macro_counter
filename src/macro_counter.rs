@@ -183,11 +183,9 @@ impl MacroCounter {
             if operation.trim().contains("q") {
                 // delete the file if it has no relevant data.
                 if self.calorie.is_empty() {
-                    println!("TESTING");
                     let _ = fs::remove_file(&self.file_path).unwrap();
                     break;
                 } else {
-                    println!("BREAKING");
                     let pathing = Pathing::generate_file_path(&utils::Date::current_date(), true);
                     let display_file_path = instantiate_display_data(
                         pathing.day_path.clone(),

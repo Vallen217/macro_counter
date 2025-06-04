@@ -101,10 +101,10 @@ impl DisplayData {
     pub fn display_dir_data(&mut self, temp_dir: bool) {
         println!(
             "\n\nCal:{}Fat:{}Carb:{}Protein:{}",
-            pad_word("Cal:"),
-            pad_word("Fat:"),
-            pad_word("Carb:"),
-            pad_word("Protein:")
+            pad_word("Cal:", 12),
+            pad_word("Fat:", 12),
+            pad_word("Carb:", 12),
+            pad_word("Protein:", 12)
         );
 
         let parsed_data = self.compile_dir_data();
@@ -114,27 +114,27 @@ impl DisplayData {
         print!(
             "\nContemporary directory total amounts:\n{}{}",
             self.totals[0],
-            pad_word(&self.totals[0].to_string())
+            pad_word(&self.totals[0].to_string(), 12)
         );
         for val in &self.totals[1..] {
             let totals_val = format!("{}g", val);
-            print!("{}{}", totals_val, pad_word(&totals_val));
+            print!("{}{}", totals_val, pad_word(&totals_val, 12));
         }
 
         print!(
             "\n\nMean daily amounts:\n{}{}",
             dir_means[0],
-            pad_word(&dir_means[0].to_string())
+            pad_word(&dir_means[0].to_string(), 12)
         );
         for val in dir_means[1..].iter() {
             let means_val = format!("{}g", val);
-            print!("{}{}", means_val, pad_word(&means_val));
+            print!("{}{}", means_val, pad_word(&means_val, 12));
         }
 
         print!("\n\nMean daily relative percentages:\n");
-        print!("{}", pad_word(""));
+        print!("{}", pad_word("", 12));
         for val in dir_rel_percent.iter() {
-            print!("{}{}", val, pad_word(&val));
+            print!("{}{}", val, pad_word(&val, 12));
         }
 
         if temp_dir {

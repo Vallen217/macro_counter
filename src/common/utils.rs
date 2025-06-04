@@ -103,10 +103,11 @@ pub fn aggregate_recent_files(mut count: i16) {
     }
 }
 
-// used to synchronize the indentation levels in .txt files.
-pub fn pad_word(word: &str) -> String {
-    let num_of_spaces = 12 - word.len();
-    let padding = " ".repeat(num_of_spaces);
+// used to synchronize the indentation levels.
+// default num_spaces = 12.
+pub fn pad_word(word: &str, num_spaces: i8) -> String {
+    let num_spaces: usize = num_spaces as usize;
+    let padding = " ".repeat(num_spaces - word.len());
     padding
 }
 
@@ -154,7 +155,7 @@ mod unit_tests {
     #[test]
     fn test_pad_word() {
         let word: &str = "test";
-        let padding: String = pad_word(word);
+        let padding: String = pad_word(word, 12);
         let padded_word = String::from("        ");
         assert_eq!(padded_word, padding);
     }
