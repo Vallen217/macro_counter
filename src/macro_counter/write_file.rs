@@ -4,21 +4,46 @@ use std::fs::{self, OpenOptions};
 use std::io::Write;
 
 impl MacroCounter {
-    fn compile_totals(&mut self) -> Vec<String> {
+    // Macro ratios by grams
+    fn compile_gram_totals(&mut self) -> Vec<String> {
         self.totals.push(self.calorie.iter().sum());
         self.totals.push(self.fat.iter().sum());
         self.totals.push(self.carb.iter().sum());
         self.totals.push(self.protein.iter().sum());
 
         let ratio: f32 = 100.0 / (self.totals[1] + self.totals[2] + self.totals[3]);
-        let mut rel_percentage: Vec<String> = Vec::new();
+        let mut rel_per: Vec<String> = Vec::new();
         for i in 1..4 {
-            let percent_1 = format!("{:.1}%", ratio * self.totals[i]);
-            let percent_2 = format!("{}{}", percent_1, pad_word(&percent_1, 12));
-            rel_percentage.push(percent_2.clone());
+            let percent = format!("{:.1}%", ratio * self.totals[i]);
+            let format_per = format!("{}{}", percent, pad_word(&percent, 12));
+            rel_per.push(format_per.clone());
         }
 
-        rel_percentage
+        rel_per
+    }
+
+    // Macro ratios by calories
+    fn compile_cal_totals(&mut self) -> Vec<String> {
+        self.totals.push(self.calorie.iter().sum());
+        self.totals.push(self.fat.iter().sum());
+        self.totals.push(self.carb.iter().sum());
+        self.totals.push(self.protein.iter().sum());
+
+        let ratio: f32 = 100.0 / self.totals[0];
+        let mut rel_per: Vec<String> = Vec::new();
+
+        let fat_percent = format!("{:.1}%", &ratio * (self.totals[1] * 9.0));
+        let format_per = format!("{}{}", fat_percent, pad_word(&fat_percent, 12));
+        rel_per.push(format_per.clone());
+
+        // Carb and protein macros
+        for i in 2..4 {
+            let percent = format!("{:.1}%", &ratio * (self.totals[i] * 4.0));
+            let format_per = format!("{}{}", percent, pad_word(&percent, 12));
+            rel_per.push(format_per.clone());
+        }
+
+        rel_per
     }
 
     fn generate_macro_string(&mut self, j: usize, i: usize) -> String {
@@ -94,15 +119,16 @@ impl MacroCounter {
         }
 
         self.totals.clear();
-        let rel_percentage = self.compile_totals();
+        let rel_cal_per = self.compile_cal_totals();
+        let rel_gram_per = self.compile_gram_totals();
 
         let total_calorie = format!("{}", self.totals[0]);
         let total_fat = format!("{}g", self.totals[1]);
         let total_carb = format!("{}g", self.totals[2]);
         let total_protein = format!("{}g", self.totals[3]);
         let string_totals = format!(
-            "\n\nTotal Amounts & Relative Percentages:\
-            \n{}{}{}{}{}{}{}\n{}{}{}{}",
+            "\n\nTotal Amounts & Macro Ratios by Calories & Grams:\
+            \n{}{}{}{}{}{}{}\n\nCalories:{}{}{}{}\nGrams:{}{}{}{}",
             total_calorie,
             pad_word(&total_calorie, 12),
             total_fat,
@@ -110,10 +136,14 @@ impl MacroCounter {
             total_carb,
             pad_word(&total_carb, 12),
             total_protein,
-            " ".repeat(12),
-            rel_percentage[0],
-            rel_percentage[1],
-            rel_percentage[2]
+            pad_word("Calories:", 12),
+            rel_cal_per[0],
+            rel_cal_per[1],
+            rel_cal_per[2],
+            pad_word("Grams:", 12),
+            rel_gram_per[0],
+            rel_gram_per[1],
+            rel_gram_per[2]
         );
         match append_file.write(string_totals.as_bytes()) {
             Ok(string_totals) => string_totals,
@@ -146,7 +176,7 @@ mod unit_tests {
         let expected_values: Vec<f32> = vec![920.0, 16.0, 152.0, 44.0];
 
         MacroCounter::compile_data(&mut test_data, false);
-        MacroCounter::compile_totals(&mut test_data);
+        MacroCounter::compile_gram_totals(&mut test_data);
 
         assert_eq!(test_data.totals, expected_values);
     }
@@ -158,7 +188,7 @@ mod unit_tests {
         let expected_values: Vec<&str> = vec!["7.5%        ", "71.7%       ", "20.8%       "];
 
         MacroCounter::compile_data(&mut test_data, false);
-        let resultant_values: Vec<String> = MacroCounter::compile_totals(&mut test_data);
+        let resultant_values: Vec<String> = MacroCounter::compile_gram_totals(&mut test_data);
 
         assert_eq!(resultant_values, expected_values);
     }
